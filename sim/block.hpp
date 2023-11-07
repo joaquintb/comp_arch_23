@@ -1,27 +1,46 @@
-//
-// Created by jtorresb on 5/11/23.
-//
-#include <vector>
-#include <fstream>
-// #include "read_binary.hpp"
-
 #ifndef COMP_ARCH_23_BLOCK_HPP
 #define COMP_ARCH_23_BLOCK_HPP
 
+#include <vector>
+#include <fstream>
 
 struct Particle{
-    double px, py, pz, hvx, hvy, hvz, vx, vy, vz, density, ax, ay, az;
-    int id;
+    int64_t pid;
+    double posX, posY, posZ;
+    double hvX, hvY, hvZ;
+    double velX, velY, velZ;
+    double density;
+    double accX, accY, accZ;
 
-    Particle(std::ifstream& file, int id);
+    Particle(std::ifstream& inputFile, int pid);
+    void write_particle_trace(std::ofstream& outputFile);
+
     template <typename T>
-    T read_binary_value(std::istream &);
+    requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
+    T read_binary_value(std::istream & is) {
+        T value{};
+        is.read(as_writable_buffer(value), sizeof(value));
+        return value;
+    }
+
     template <typename T>
-    void write_binary_value(T, std::ostream & ); 
+    requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
+    void write_binary_value(T value, std::ostream & os) {
+        os.write(as_buffer(value), sizeof(value));
+    }
+
     template <typename T>
-    char const * as_buffer(T const &);
+    requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
+    char const * as_buffer(T const & value) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+        return reinterpret_cast<char const *>(&value);
+    }
+
     template <typename T>
-    char * as_writable_buffer(T &);
+    char * as_writable_buffer(T & value) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+        return reinterpret_cast<char *>(&value);
+    }
 };
 
 class Block{
