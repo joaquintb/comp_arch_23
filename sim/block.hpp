@@ -14,6 +14,8 @@ struct Particle{
     double density;
     double accX, accY, accZ;
 
+    Particle();
+
     Particle(std::ifstream& inputFile, int pid);
 
     int compute_grid_index(Simulation& sim);
