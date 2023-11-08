@@ -3,15 +3,15 @@
 // Particle constructor
 Particle::Particle(std::ifstream& inputFile, int pid){
     this->pid = pid;
-    posX = read_binary_value<float>(inputFile);
-    posY = read_binary_value<float>(inputFile);
-    posZ = read_binary_value<float>(inputFile);
-    hvX = read_binary_value<float>(inputFile);
-    hvY = read_binary_value<float>(inputFile);
-    hvZ = read_binary_value<float>(inputFile);
-    velX = read_binary_value<float>(inputFile);
-    velY = read_binary_value<float>(inputFile);
-    velZ = read_binary_value<float>(inputFile);
+    this->posX = read_binary_value<float>(inputFile);
+    this->posY = read_binary_value<float>(inputFile);
+    this->posZ = read_binary_value<float>(inputFile);
+    this->hvX = read_binary_value<float>(inputFile);
+    this->hvY = read_binary_value<float>(inputFile);
+    this->hvZ = read_binary_value<float>(inputFile);
+    this->velX = read_binary_value<float>(inputFile);
+    this->velY = read_binary_value<float>(inputFile);
+    this->velZ = read_binary_value<float>(inputFile);
 }
 
 // Function to write Particle attributes in double precision
