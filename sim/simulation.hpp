@@ -1,6 +1,7 @@
 #ifndef COMP_ARCH_23_SIMULATION_HPP
 #define COMP_ARCH_23_SIMULATION_HPP
 
+#include <iostream>
 #include <vector>
 #include <cmath>
 
@@ -26,6 +27,8 @@ public:
     std::vector<double> size_blocks;
 
     Simulation(float ppm, int num_p);
+    void checkValues();
+    void printValues();
 
 private:
     double ppm, sm_len, mass; 
