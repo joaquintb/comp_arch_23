@@ -13,6 +13,12 @@ void inputTest(int argc, char **argv){
 
     // ------------------------ READING INPUT FILE & ERROR HANDLING------------------------
 
+    for (int i = 0; i < arguments[0].size(); i++) {
+        if(isdigit(arguments[0][i]) == false && arguments[0][i] != '-')
+            numeric = false;
+    }
+
+
     if(argc - 1 != 3){
         std::cerr << "Error: Invalid number of arguments: " << std::to_string(argc-1) << std::endl;
         std::exit(-1);
