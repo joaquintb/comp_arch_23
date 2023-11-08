@@ -31,3 +31,19 @@ void Particle::write_particle_trace(std::ofstream& outputFile) {
     this->write_binary_value(this->accY, outputFile);
     this->write_binary_value(this->accZ, outputFile);
 }
+
+int Particle::compute_grid_index(Simulation& sim) {
+    int i = floor((this->posX - sim.b_min[0]) / sim.size_blocks[0]);
+    int j = floor((this->posY - sim.b_min[1]) / sim.size_blocks[1]);
+    int k = floor((this->posZ - sim.b_min[2]) / sim.size_blocks[2]);
+
+    if (i < 0) { i = 0; }
+    if (i >= sim.n_x) { i = sim.n_x - 1; }
+    if (j < 0) { j = 0; }
+    if (j >= sim.n_y) { j = sim.n_y - 1; }
+    if (k < 0) { k = 0; }
+    if (k >= sim.n_z) { k = sim.n_z - 1; }
+
+    int grid_index = i + sim.n_x * (j + sim.n_y * k);
+    return grid_index;
+}

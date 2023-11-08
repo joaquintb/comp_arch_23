@@ -4,6 +4,8 @@
 #include <vector>
 #include <fstream>
 
+#include "simulation.hpp"
+
 struct Particle{
     int64_t pid;
     double posX, posY, posZ;
@@ -13,6 +15,9 @@ struct Particle{
     double accX, accY, accZ;
 
     Particle(std::ifstream& inputFile, int pid);
+
+    int compute_grid_index(Simulation& sim);
+
     void write_particle_trace(std::ofstream& outputFile);
 
     template <typename T>
@@ -45,6 +50,7 @@ struct Particle{
 
 class Block{
     // Attributes 
+public:
     std::vector<Particle> particles;
     std::vector<Block*> neighbours; // max size of 26
 
