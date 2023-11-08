@@ -1,3 +1,6 @@
+#ifndef COMP_ARCH_23_SIMULATION_HPP
+#define COMP_ARCH_23_SIMULATION_HPP
+
 #include <vector>
 #include <cmath>
 
@@ -28,3 +31,5 @@ private:
     double ppm, sm_len, mass; 
     int num_p;
 };
+
+#endif //COMP_ARCH_23_SIMULATION_HPP

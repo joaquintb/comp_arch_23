@@ -42,5 +42,7 @@ int main (int argc, char **argv) {
     // Add blocks to grid 
     grid.populate(sim, inputFile);
 
+    inputFile.close();
+
     return 0; 
 }
