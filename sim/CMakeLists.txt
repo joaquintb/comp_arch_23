@@ -8,6 +8,8 @@
 	block.hpp
 	util.cpp
 	util.hpp
+	simulation.cpp
+	simulation.hpp
     )
 
 # Use this line only if you have dependencies from stim to GSL
