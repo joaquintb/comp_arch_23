@@ -13,7 +13,6 @@ Grid::Grid(int size_x, int size_y, int size_z) {
 
 void Grid::populate(Simulation& sim, std::ifstream& inputFile) {
     int num_p = sim.get_num_p();
-
     for (int i = 0; i < num_p; i++) {
         Particle cur_particle = Particle(inputFile, i);
         int grid_index = cur_particle.compute_grid_index(sim);
@@ -23,7 +22,10 @@ void Grid::populate(Simulation& sim, std::ifstream& inputFile) {
 };
 
 void Grid::display_grid(){
+    int count = -1;
     for (auto block : this->blocks) {
+        count++;
+        std::cout << count << '\n';
         for (auto particle : block.particles) {
             std::cout << "ID: " << particle.pid  << " " << particle.posX << " " << particle.posY << " " << particle.posZ << std::endl;
         }
