@@ -2,6 +2,7 @@
 #define COMP_ARCH_23_GRID_HPP
 
 #include <vector>
+#include <iostream>
 #include "block.hpp"
 #include "simulation.hpp"
 
@@ -9,6 +10,7 @@ class Grid {
     public:
         Grid(int size_x, int size_y, int size_z);
         void populate(Simulation& sim, std::ifstream& inputFile);
+        void display_grid();
     
     private:
         int size_x, size_y, size_z, n_particles, size;

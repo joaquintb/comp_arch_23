@@ -21,3 +21,11 @@ void Grid::populate(Simulation& sim, std::ifstream& inputFile) {
     }
 
 };
+
+void Grid::display_grid(){
+    for (auto block : this->blocks) {
+        for (auto particle : block.particles) {
+            std::cout << "ID: " << particle.pid  << " " << particle.posX << " " << particle.posY << " " << particle.posZ << std::endl;
+        }
+    }
+}
