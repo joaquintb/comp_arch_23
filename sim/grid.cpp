@@ -29,3 +29,49 @@ void Grid::display_grid(){
         }
     }
 }
+
+bool Grid::cmp_trace(std::ifstream& trace)
+{
+    // Read the total number of blocks from the binary file
+    int32_t totalBlocks;
+    trace.read(reinterpret_cast<char*>(&totalBlocks), sizeof(totalBlocks));
+    // Check it matches size of the grid
+    if (totalBlocks != static_cast<int32_t>(this->size)) {
+        std::cerr << "Mismatch in the number of blocks in the grid." << std::endl;
+        return false;
+    }
+    // Compare particle data block by block
+    for (int i = 0; i < totalBlocks; ++i) {
+        // Read the number of particles in the block from the binary file
+        int64_t numParticles;
+        trace.read(reinterpret_cast<char*>(&numParticles), sizeof(numParticles));
+        // Check it matches the number of particles of the block in the trace
+        if (numParticles != static_cast<int64_t>(this->blocks[i].particles.size())) {
+            std::cerr << "Mismatch in the number of particles in block " << i << std::endl;
+            return false;
+        }
+        // Compare particle data field by field
+        for (int j = 0; j < numParticles; ++j) {
+            Particle particleFromFile;
+            trace.read(reinterpret_cast<char*>(&particleFromFile), sizeof(Particle));
+
+            const Particle& particleFromVector = this->blocks[i].particles[j];
+
+            // Compare each field of the particles
+            if (particleFromFile.pid != particleFromVector.pid ||
+                particleFromFile.posX != particleFromVector.posX ||
+                particleFromFile.posY != particleFromVector.posY ||
+                particleFromFile.posZ != particleFromVector.posZ ||
+                // Compare other fields similarly...
+                particleFromFile.accX != particleFromVector.accX ||
+                particleFromFile.accY != particleFromVector.accY ||
+                particleFromFile.accZ != particleFromVector.accZ) {
+                std::cerr << "Mismatch in particle data in block " << i << ", particle " << j  << std::endl;
+                return false;
+            }
+        }
+    }
+
+    std::cout << "Data comparison successful." << std::endl;
+    return true;
+}
