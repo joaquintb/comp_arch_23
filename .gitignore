@@ -1,1 +1,4 @@
 .vscode/settings.json
+.idea/
+release/
+cmake-build-debug/
