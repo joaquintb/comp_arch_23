@@ -1,5 +1,9 @@
 #include "block.hpp"
 
+// Default constructor
+Particle::Particle(){
+}
+
 // Particle constructor
 Particle::Particle(std::ifstream& inputFile, int pid){
     this->pid = pid;
