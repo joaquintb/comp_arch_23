@@ -6,6 +6,7 @@
 #include "block.hpp"
 #include "simulation.hpp"
 #include <set>
+#include <cmath>
 
 class Grid {
     public:

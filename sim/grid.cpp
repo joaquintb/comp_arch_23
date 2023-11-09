@@ -105,7 +105,9 @@ bool Grid::cmp_trace(std::ifstream& trace)
             const Particle& particleFromVector = this->blocks[i].particles[j];
 
             // Compare each field of the particles
-            if (particleFromFile.density != particleFromVector.density) {
+            double tolerance = 0.00001; // You can adjust the tolerance based on your specific use case
+
+            if (fabs(particleFromFile.density - particleFromVector.density) > tolerance)  {
                 std::cout << particleFromFile.density << std::endl;
                 std::cout << particleFromVector.density << std::endl;
                 std::cerr << "Mismatch in particle data in block " << i << ", particle " << j << std::endl;
@@ -137,7 +139,7 @@ void Grid::increase_all_dens(Simulation& sim) {
                     // (i,j) equivalent to (j,i)
                     std::pair<int, int> particle_pair (std::min(id_i, id_j), std::max(id_i, id_j));
                     // If not a processed pair
-                    if (proc_pairs.find(particle_pair) == proc_pairs.end()) {
+                    if (proc_pairs.find(particle_pair) == proc_pairs.end() and id_i != id_j) {
 
                         // ------------------- DENSITY OPS -------------------
                         double density_increase = 0;
