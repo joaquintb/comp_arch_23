@@ -12,6 +12,8 @@ class Grid {
         void populate(Simulation& sim, std::ifstream& inputFile);
         void display_grid();
         bool cmp_trace(std::ifstream& trace);
+        void set_neighbors();
+        void test_neighbors();
     
     private:
         int size_x, size_y, size_z, n_particles, size;

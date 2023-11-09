@@ -53,6 +53,8 @@ struct Particle{
 class Block{
     // Attributes 
 public:
+    Block (int bid);
+    int bid;
     std::vector<Particle> particles;
     std::vector<Block*> neighbours; // max size of 26
 
