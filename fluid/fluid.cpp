@@ -46,16 +46,18 @@ int main (int argc, char **argv) {
     grid.populate(sim, inputFile);
     // Add neighbor blocks to all blocks
     grid.set_neighbors();
-    grid.test_neighbors();
+    // grid.test_neighbors();
 
     inputFile.close();
 
+    grid.increase_all_dens(sim);
+
     // TRACE: check if initial population of grid was correct
     // Need to specify dir wrt to fluid executable
-    //const std::string fileName = "../../trz/small/initacc-base-1.trz";
-    //std::ifstream trace(fileName, std::ios::binary);
-    //grid.cmp_trace(trace);
-    //trace.close();
+    const std::string fileName = "../../trz/small/densinc-base-1.trz";
+    std::ifstream trace(fileName, std::ios::binary);
+    grid.cmp_trace(trace);
+    trace.close();
 
     return 0;
 }

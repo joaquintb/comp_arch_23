@@ -105,15 +105,10 @@ bool Grid::cmp_trace(std::ifstream& trace)
             const Particle& particleFromVector = this->blocks[i].particles[j];
 
             // Compare each field of the particles
-            if (particleFromFile.pid != particleFromVector.pid ||
-                particleFromFile.posX != particleFromVector.posX ||
-                particleFromFile.posY != particleFromVector.posY ||
-                particleFromFile.posZ != particleFromVector.posZ ||
-                // Compare other fields similarly...
-                particleFromFile.accX != particleFromVector.accX ||
-                particleFromFile.accY != particleFromVector.accY ||
-                particleFromFile.accZ != particleFromVector.accZ) {
-                std::cerr << "Mismatch in particle data in block " << i << ", particle " << j  << std::endl;
+            if (particleFromFile.density != particleFromVector.density) {
+                std::cout << particleFromFile.density << std::endl;
+                std::cout << particleFromVector.density << std::endl;
+                std::cerr << "Mismatch in particle data in block " << i << ", particle " << j << std::endl;
                 return false;
             }
         }
@@ -121,4 +116,55 @@ bool Grid::cmp_trace(std::ifstream& trace)
 
     std::cout << "Data comparison successful." << std::endl;
     return true;
+}
+
+
+// [!] TEMP: if successful, to be split in functions
+void Grid::increase_all_dens(Simulation& sim) {
+
+    std::set<std::pair<int, int>> proc_pairs;
+
+    // For each block in the grid
+    for (auto &block : this->blocks) {
+        // Iterate over particles within the current block
+        for (auto &part_i : block.particles) {
+            // Iterate over neighbor block pointers
+            for (auto &neigh_block_ptr : block.neighbours) {
+                // Iterate over particles within the neighboring block
+                for (auto& part_j : neigh_block_ptr->particles) {
+                    int id_i = part_i.pid;
+                    int id_j = part_j.pid;
+                    // (i,j) equivalent to (j,i)
+                    std::pair<int, int> particle_pair (std::min(id_i, id_j), std::max(id_i, id_j));
+                    // If not a processed pair
+                    if (proc_pairs.find(particle_pair) == proc_pairs.end()) {
+
+                        // ------------------- DENSITY OPS -------------------
+                        double density_increase = 0;
+                        double diff_x = part_i.posX - part_j.posX;
+                        double diff_y = part_i.posY - part_j.posY;
+                        double diff_z = part_i.posZ - part_j.posZ;
+
+                        double distanceSquared = (diff_x)*(diff_x) + (diff_y)*(diff_y) + (diff_z)*(diff_z);
+
+                        double h = sim.get_sm_len();
+                        double const hSquared = h * h;
+
+                        if (distanceSquared < hSquared) {
+                            double hMinusDist     = hSquared - distanceSquared;
+                            density_increase      = hMinusDist * hMinusDist * hMinusDist;
+                        }
+
+                        part_i.density += density_increase;
+                        part_j.density += density_increase;
+
+                        // ------------------- DENSITY OPS -------------------
+
+                        // Pair processed
+                        proc_pairs.insert(particle_pair);
+                    }
+                }
+            }
+        }
+    }
 }
