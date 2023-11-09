@@ -46,13 +46,12 @@ int main (int argc, char **argv) {
     grid.populate(sim, inputFile);
     inputFile.close();
 
-    // Input successful function
-
-
-
-
-
-    //display_trace("../../trz/small/repos-base-1.trz");
+    // TRACE: check if initial population of grid was correct
+    // Need to specify dir wrt to fluid executable
+    const std::string fileName = "../../trz/small/initacc-base-1.trz";
+    std::ifstream trace(fileName, std::ios::binary);
+    grid.cmp_trace(trace);
+    trace.close();
 
     return 0;
 }
