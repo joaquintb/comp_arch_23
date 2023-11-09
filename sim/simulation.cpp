@@ -31,3 +31,21 @@ Simulation::Simulation(float ppm, int num_p) {
                          (this->b_max[1] - this->b_min[1]) / this->n_y,
                          (this->b_max[2] - this->b_min[2]) / this->n_z};
 };
+
+void Simulation::checkValues () {
+    if(this->get_num_p() <= 0){
+        std::cerr << "Error: Invalid number of particles: " << this->get_num_p() << ".\n";
+        std::exit(-5);
+    }
+    // Pending (else if) if num_p == number of particles read in file
+}
+
+void Simulation::printValues() {
+    std::cout << "Number of particles: " << this->get_num_p() << '\n';
+    std::cout << "Particles per meter: " << this->get_ppm() << '\n';
+    std::cout << "Smoothing length: " << this-> get_sm_len() << '\n';
+    std::cout << "Particle mass: " << this->mass << '\n';
+    std::cout << "Grid size: " << this->n_x << " x " << this->n_y << " x " << this->n_z << '\n';
+    //std::cout << "Number of blocks: " << '\n';
+    std::cout << "Block size: " << this->size_blocks[0] << " x " << this->size_blocks[1] << " x " << this->size_blocks[2] << '\n';
+}

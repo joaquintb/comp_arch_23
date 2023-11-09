@@ -11,19 +11,18 @@
 #include "../sim/progargs.hpp"
 #include "../sim/simulation.hpp"
 #include "../sim/grid.hpp"
+#include "../sim/util.hpp"
 
 int main (int argc, char **argv) {
-    // Grid initialization 
-    // Read binary file 
-    std::string filename = "small.fld";
+    // Input handling
+    inputTest(argc, argv);
 
-    std::ifstream inputFile("../../small.fld", std::ios::binary);
+    // Open binary file and read ppm and num_p
+    std::span const args_view{argv, static_cast<std::size_t>(argc)};
+    std::vector<std::string> const arguments{args_view.begin() + 1, args_view.end()};
+    std::ifstream inputFile(arguments[1], std::ios::binary);
 
-    if (!inputFile.is_open()) {
-        std::cerr << "Unable to open the file." << std::endl;
-        return 1;
-    }
-    float ppm; 
+    float ppm;
     int num_p;
 
     inputFile.read(reinterpret_cast<char*>(&ppm), sizeof(float));
@@ -32,17 +31,28 @@ int main (int argc, char **argv) {
     // Create simulation 
     Simulation sim = Simulation(ppm, num_p);
 
+    sim.checkValues(); // Check num_p is correct
+
     int const nx = floor((sim.b_max[0] - sim.b_min[0]) / sim.get_sm_len());
     int const ny = floor((sim.b_max[1] - sim.b_min[1]) / sim.get_sm_len());
     int const nz = floor((sim.b_max[2] - sim.b_min[2]) / sim.get_sm_len());
+
+    sim.printValues(); // Print initial attributes of simulation (successful input)
 
     // Create grid
     Grid grid = Grid(nx, ny, nz);
 
     // Add blocks to grid 
     grid.populate(sim, inputFile);
-
     inputFile.close();
 
-    return 0; 
+    // Input successful function
+
+
+
+
+
+    //display_trace("../../trz/small/repos-base-1.trz");
+
+    return 0;
 }
