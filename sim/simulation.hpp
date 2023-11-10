@@ -28,7 +28,7 @@ public:
 
     Simulation(float ppm, int num_p);
     void checkValues();
-    void printValues();
+    void printValues(int);
 
 private:
     double ppm, sm_len, mass; 
