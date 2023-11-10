@@ -17,7 +17,6 @@ Grid::Grid(int size_x, int size_y, int size_z) {
 
 void Grid::populate(Simulation& sim, std::ifstream& inputFile) {
     int num_p = sim.get_num_p();
-
     for (int i = 0; i < num_p; i++) {
         Particle cur_particle = Particle(inputFile, i);
         int grid_index = cur_particle.compute_grid_index(sim);
@@ -26,7 +25,10 @@ void Grid::populate(Simulation& sim, std::ifstream& inputFile) {
 };
 
 void Grid::display_grid(){
+    int count = -1;
     for (auto block : this->blocks) {
+        count++;
+        std::cout << count << '\n';
         for (auto particle : block.particles) {
             std::cout << "ID: " << particle.pid  << " " << particle.posX << " " << particle.posY << " " << particle.posZ << std::endl;
         }
@@ -109,19 +111,19 @@ bool Grid::cmp_trace(std::ifstream& trace)
 
             if (fabs(particleFromFile.accX - particleFromVector.accX) > tolerance) {
                 std::cout << "ax mismatch - Trace value: " << particleFromFile.accX
-                        << ", Grid value: " << particleFromVector.accX << std::endl;
+                        << ", Grid value: " << particleFromVector.accX << "\nBlock: " << i << std::endl;
                 return false;
             }
 
             if (fabs(particleFromFile.accY - particleFromVector.accY) > tolerance) {
                 std::cout << "ay mismatch - Trace value: " << particleFromFile.accY
-                        << ", Grid value: " << particleFromVector.accY << std::endl;
+                        << ", Grid value: " << particleFromVector.accY  << "\nBlock: " << i << std::endl;
                 return false;
             }
 
             if (fabs(particleFromFile.accZ - particleFromVector.accZ) > tolerance) {
                 std::cout << "az mismatch - Trace value: " << particleFromFile.accZ
-                        << ", Grid value: " << particleFromVector.accZ<< std::endl;
+                        << ", Grid value: " << particleFromVector.accZ  << "\nBlock: " << i << std::endl;
                 return false;
             }
         }
@@ -158,7 +160,7 @@ void Grid::increase_all_dens(Simulation& sim) {
                         double diff_y = part_i.posY - part_j.posY;
                         double diff_z = part_i.posZ - part_j.posZ;
 
-                        double distanceSquared = (diff_x)*(diff_x) + (diff_y)*(diff_y) + (diff_z)*(diff_z);
+                        double distanceSquared = (diff_x*diff_x) + (diff_y*diff_y) + (diff_z*diff_z);
 
                         double sm_len = sim.get_sm_len();
                         double const hSquared = sm_len * sm_len;
@@ -225,7 +227,7 @@ void Grid::increase_all_accs(Simulation &sim) {
                         double diff_x = part_i.posX - part_j.posX;
                         double diff_y = part_i.posY - part_j.posY;
                         double diff_z = part_i.posZ - part_j.posZ;
-                        double distanceSquared = (diff_x)*(diff_x) + (diff_y)*(diff_y) + (diff_z)*(diff_z);                       
+                        double distanceSquared = (diff_x*diff_x) + (diff_y*diff_y) + (diff_z*diff_z);
 
                         if (distanceSquared < hSquared) {
                             // Acc. computations
@@ -257,13 +259,13 @@ void Grid::increase_all_accs(Simulation &sim) {
                                 acc_inc_z = fact_0_z*common_factor*fact_1*fact_2*fact_3 + fact_4_z*common_factor*fact_5;
 
                                 // Update acc
-                                part_i.accX += acc_inc_x;
-                                part_i.accY += acc_inc_y;
-                                part_i.accZ += acc_inc_z;
+                                part_i.accX += acc_inc_x / (part_i.density * part_j.density);
+                                part_i.accY += acc_inc_y / (part_i.density * part_j.density);
+                                part_i.accZ += acc_inc_z / (part_i.density * part_j.density);
 
-                                part_j.accX -= acc_inc_x;
-                                part_j.accY -= acc_inc_y;
-                                part_j.accZ -= acc_inc_z;
+                                part_j.accX -= acc_inc_x / (part_i.density * part_j.density);
+                                part_j.accY -= acc_inc_y / (part_i.density * part_j.density);
+                                part_j.accZ -= acc_inc_z / (part_i.density * part_j.density);
                                 // ------------------- ACC OPS -------------------
 
                                 // Pair processed
