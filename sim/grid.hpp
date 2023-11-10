@@ -18,6 +18,7 @@ class Grid {
         void test_neighbors();
         void increase_all_dens(Simulation& sim);
         void trans_all_dens(Simulation &sim);
+        void increase_all_accs(Simulation &sim);
     
     private:
         int size_x, size_y, size_z, n_particles, size;
