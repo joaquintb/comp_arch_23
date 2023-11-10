@@ -57,9 +57,13 @@ int main (int argc, char **argv) {
 
     grid.increase_all_accs(sim);
 
+    grid.part_collisions(sim);
+
+    grid.motion(sim);
+
     // TRACE: check if initial population of grid was correct
     // Need to specify dir wrt to fluid executable
-    const std::string fileName = "../../trz/small/acctransf-base-1.trz";
+    const std::string fileName = "../../trz/small/motion-base-1.trz";
     std::ifstream trace(fileName, std::ios::binary);
     grid.cmp_trace(trace);
     trace.close();

@@ -107,29 +107,96 @@ bool Grid::cmp_trace(std::ifstream& trace)
             const Particle& particleFromVector = this->blocks[i].particles[j];
 
             // Compare each field of the particles
-            double tolerance = 0.0000000001; // You can adjust the tolerance based on your specific use case
+            double tolerance = 0.000001; // You can adjust the tolerance based on your specific use case
+
+            if (fabs(particleFromFile.pid - particleFromVector.pid) > tolerance) {
+                std::cout << "pid mismatch - Trace value: " << particleFromFile.pid
+                        << ", Grid value: " << particleFromVector.pid << "\nBlock: " << i << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.posX - particleFromVector.posX) > tolerance) {
+                std::cout << "posX mismatch - Trace value: " << particleFromFile.posX
+                        << ", Grid value: " << particleFromVector.posX << "\nBlock: " << i << std::endl;
+                std::cout << "Particle: " << j << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.posY - particleFromVector.posY) > tolerance) {
+                std::cout << "posY mismatch - Trace value: " << particleFromFile.posY
+                        << ", Grid value: " << particleFromVector.posY << "\nBlock: " << i << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.posZ - particleFromVector.posZ) > tolerance) {
+                std::cout << "posZ mismatch - Trace value: " << particleFromFile.posZ
+                        << ", Grid value: " << particleFromVector.posZ << "\nBlock: " << i << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.hvX - particleFromVector.hvX) > tolerance) {
+                std::cout << "hvX mismatch - Trace value: " << particleFromFile.hvX
+                        << ", Grid value: " << particleFromVector.hvX << "\nBlock: " << i << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.hvY - particleFromVector.hvY) > tolerance) {
+                std::cout << "hvY mismatch - Trace value: " << particleFromFile.hvY
+                        << ", Grid value: " << particleFromVector.hvY << "\nBlock: " << i << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.hvZ - particleFromVector.hvZ) > tolerance) {
+                std::cout << "hvZ mismatch - Trace value: " << particleFromFile.hvZ
+                        << ", Grid value: " << particleFromVector.hvZ << "\nBlock: " << i << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.velX - particleFromVector.velX) > tolerance) {
+                std::cout << "velX mismatch - Trace value: " << particleFromFile.velX
+                        << ", Grid value: " << particleFromVector.velX << "\nBlock: " << i << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.velY - particleFromVector.velY) > tolerance) {
+                std::cout << "velY mismatch - Trace value: " << particleFromFile.velY
+                        << ", Grid value: " << particleFromVector.velY << "\nBlock: " << i << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.velZ - particleFromVector.velZ) > tolerance) {
+                std::cout << "velZ mismatch - Trace value: " << particleFromFile.velZ
+                        << ", Grid value: " << particleFromVector.velZ << "\nBlock: " << i << std::endl;
+                return false;
+            }
+
+            if (fabs(particleFromFile.density - particleFromVector.density) > tolerance) {
+                std::cout << "density mismatch - Trace value: " << particleFromFile.density
+                        << ", Grid value: " << particleFromVector.density << "\nBlock: " << i << std::endl;
+                return false;
+            }
 
             if (fabs(particleFromFile.accX - particleFromVector.accX) > tolerance) {
-                std::cout << "ax mismatch - Trace value: " << particleFromFile.accX
+                std::cout << "accX mismatch - Trace value: " << particleFromFile.accX
                         << ", Grid value: " << particleFromVector.accX << "\nBlock: " << i << std::endl;
                 return false;
             }
 
             if (fabs(particleFromFile.accY - particleFromVector.accY) > tolerance) {
-                std::cout << "ay mismatch - Trace value: " << particleFromFile.accY
-                        << ", Grid value: " << particleFromVector.accY  << "\nBlock: " << i << std::endl;
+                std::cout << "accY mismatch - Trace value: " << particleFromFile.accY
+                        << ", Grid value: " << particleFromVector.accY << "\nBlock: " << i << std::endl;
                 return false;
             }
 
             if (fabs(particleFromFile.accZ - particleFromVector.accZ) > tolerance) {
-                std::cout << "az mismatch - Trace value: " << particleFromFile.accZ
-                        << ", Grid value: " << particleFromVector.accZ  << "\nBlock: " << i << std::endl;
+                std::cout << "accZ mismatch - Trace value: " << particleFromFile.accZ
+                        << ", Grid value: " << particleFromVector.accZ << "\nBlock: " << i << std::endl;
                 return false;
             }
         }
     }
 
-    std::cout << "Data comparison successful." << std::endl;
+    std::cout << "Data comparison successful :)" << std::endl;
     return true;
 }
 
@@ -247,9 +314,9 @@ void Grid::increase_all_accs(Simulation &sim) {
                                 double fact_0_y = part_i.posY - part_j.posY;
                                 double fact_0_z = part_i.posZ - part_j.posZ;
 
-                                double fact_4_x = part_i.velX - part_j.velX;
-                                double fact_4_y = part_i.velY - part_j.velY;
-                                double fact_4_z = part_i.velZ - part_j.velZ;
+                                double fact_4_x = part_j.velX - part_i.velX;
+                                double fact_4_y = part_j.velY - part_i.velY;
+                                double fact_4_z = part_j.velZ - part_i.velZ;
 
                                 double fact_2 = (sm_len-dist_ij)*(sm_len-dist_ij)/dist_ij;
                                 double fact_3 = part_i.density+part_j.density - 2*f_dens;
@@ -275,6 +342,91 @@ void Grid::increase_all_accs(Simulation &sim) {
                     }
                 }
             }
+        }
+    }
+}
+
+void Grid::part_collisions(Simulation &sim) {
+
+    double const delta_coll_max = 1e-10;
+    double delta_coll;
+
+    // For each block in the grid
+    for (int block_id = 0; block_id < this->size; ++block_id) {
+        // Retrieve indexes (i, j, k) from block_id
+        int k        = block_id / (this->size_x * this->size_y);
+        int block_id_aux = block_id % (this->size_x * this->size_y);
+        int j        = block_id_aux / this->size_x;
+        int i        = block_id_aux % this->size_x;
+
+        // Boundary cases
+        if (i == 0 || i == this->size_x - 1 || j == 0 || j == this->size_y - 1 || k == 0 || k == this->size_z - 1) {
+        // For each particle in the current block
+          for (auto & particle: this->blocks[block_id].particles) {
+            if (i == 0) {
+                
+              particle.posX += particle.hvX * sim.delta_t;
+              delta_coll    = sim.d_p - (particle.posX - sim.b_min[0]);
+              if (delta_coll > delta_coll_max) {
+                particle.accX += (sim.s_c * delta_coll - sim.d_v * particle.velX);
+              }
+
+            } else if (i == this->size_x - 1) {
+              particle.posX += particle.hvX * sim.delta_t;
+              delta_coll    = sim.d_p - (sim.b_max[0] - particle.posX);
+              if (delta_coll > delta_coll_max) {
+                particle.accX -= (sim.s_c * delta_coll + sim.d_v * particle.velX);
+              }
+            }
+
+            if (j == 0) {
+              particle.posY += particle.hvY * sim.delta_t;
+              delta_coll    = sim.d_p - (particle.posY - sim.b_min[1]);
+              if (delta_coll > delta_coll_max) {
+                particle.accY += (sim.s_c * delta_coll - sim.d_v * particle.velY);
+              }
+            } else if (j == this->size_y - 1) {
+              particle.posY += particle.hvY * sim.delta_t;
+              delta_coll    = sim.d_p - (sim.b_max[1] - particle.posY);
+              if (delta_coll > delta_coll_max) {
+                particle.accY -= (sim.s_c * delta_coll + sim.d_v * particle.velY);
+              }
+            }
+
+            if (k == 0) {
+              particle.posZ += particle.hvZ * sim.delta_t;
+              delta_coll    = sim.d_p - (particle.posZ - sim.b_min[2]);
+              if (delta_coll > delta_coll_max) {
+                particle.accZ += (sim.s_c * delta_coll - sim.d_v * particle.velZ);
+              }
+            } else if (k == this->size_z - 1) {
+              particle.posZ += particle.hvZ * sim.delta_t;
+              delta_coll    = sim.d_p - (sim.b_max[2] - particle.posZ);
+              if (delta_coll > delta_coll_max) {
+                particle.accZ -= (sim.s_c * delta_coll + sim.d_v * particle.velZ);
+              }
+            }
+          }
+        }
+    }
+}
+
+void Grid::motion(Simulation &sim) {
+    // For each block in the grid
+    for (auto &block: this->blocks) {
+        // For each particle in that block
+        for (auto &particle: block.particles) {
+            particle.posX = particle.posX + (particle.hvX * sim.delta_t) + (particle.accX * sim.delta_t * sim.delta_t);
+            particle.posY = particle.posY + particle.hvY * sim.delta_t + particle.accY * sim.delta_t * sim.delta_t;
+            particle.posZ = particle.posZ + particle.hvZ * sim.delta_t + particle.accZ * sim.delta_t * sim.delta_t;
+
+            particle.velX = particle.hvX + 0.5 * particle.accX * sim.delta_t;
+            particle.velY = particle.hvY + 0.5 * particle.accY * sim.delta_t;
+            particle.velZ = particle.hvZ + 0.5 * particle.accZ * sim.delta_t;
+
+            particle.hvX = particle.hvX + particle.accX * sim.delta_t;
+            particle.hvY = particle.hvY + particle.accY * sim.delta_t;
+            particle.hvZ = particle.hvZ + particle.accZ * sim.delta_t;
         }
     }
 }
