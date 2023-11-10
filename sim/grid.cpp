@@ -105,11 +105,11 @@ bool Grid::cmp_trace(std::ifstream& trace)
             const Particle& particleFromVector = this->blocks[i].particles[j];
 
             // Compare each field of the particles
-            double tolerance = 0.00001; // You can adjust the tolerance based on your specific use case
+            double tolerance = 0.000000000001; // You can adjust the tolerance based on your specific use case
 
             if (fabs(particleFromFile.density - particleFromVector.density) > tolerance)  {
-                std::cout << particleFromFile.density << std::endl;
-                std::cout << particleFromVector.density << std::endl;
+                std::cout << "Trace value: " << particleFromFile.density << std::endl;
+                std::cout << "Grid value: " << particleFromVector.density << std::endl;
                 std::cerr << "Mismatch in particle data in block " << i << ", particle " << j << std::endl;
                 return false;
             }
@@ -167,6 +167,22 @@ void Grid::increase_all_dens(Simulation& sim) {
                     }
                 }
             }
+        }
+    }
+}
+
+void Grid::trans_all_dens(Simulation &sim){
+
+    double const sm_len = sim.get_sm_len();
+    double const h_pow6 = pow(sm_len, 6);
+    double const prefactor_dens = (315 * sim.get_mass()) / (64 * std::numbers::pi * pow(sm_len, 9));
+
+    // For each block in the grid
+    for (auto &block : this->blocks) { 
+        // Iterate over particles within the current block
+        for (auto &part_i : block.particles) {
+             // Perform density transformation
+            part_i.density = (part_i.density + h_pow6) * prefactor_dens;
         }
     }
 }
