@@ -36,8 +36,9 @@ int main (int argc, char **argv) {
     int const nx = floor((sim.b_max[0] - sim.b_min[0]) / sim.get_sm_len());
     int const ny = floor((sim.b_max[1] - sim.b_min[1]) / sim.get_sm_len());
     int const nz = floor((sim.b_max[2] - sim.b_min[2]) / sim.get_sm_len());
+    int const n_blocks = nx * ny * nz;
 
-    sim.printValues(); // Print initial attributes of simulation (successful input)
+    sim.printValues(n_blocks); // Print initial attributes of simulation (successful input)
 
     // Create grid
     Grid grid = Grid(nx, ny, nz);
