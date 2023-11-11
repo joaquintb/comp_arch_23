@@ -21,6 +21,7 @@ class Grid {
         void increase_all_accs(Simulation &sim);
         void part_collisions(Simulation &sim);
         void motion(Simulation &sim);
+        void part_box_collisions(Simulation &sim);
     
     private:
         int size_x, size_y, size_z, n_particles, size;

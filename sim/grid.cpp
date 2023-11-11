@@ -430,3 +430,79 @@ void Grid::motion(Simulation &sim) {
         }
     }
 }
+
+void Grid::part_box_collisions(Simulation &sim) {
+
+    double const delta_coll_max = 1e-10;
+    double delta_coll;
+    double dx, dy, dz;
+
+    // For each block in the grid
+    for (int block_id = 0; block_id < this->size; ++block_id) {
+        // Retrieve indexes (i, j, k) from block_id
+        int k        = block_id / (this->size_x * this->size_y);
+        int block_id_aux = block_id % (this->size_x * this->size_y);
+        int j        = block_id_aux / this->size_x;
+        int i        = block_id_aux % this->size_x;
+
+        // Boundary cases
+        if (i == 0 || i == this->size_x - 1 || j == 0 || j == this->size_y - 1 || k == 0 || k == this->size_z - 1) {
+            // For each particle in the current block
+            for (auto & particle: this->blocks[block_id].particles) {
+                // Collisions with x-axis bounds
+                if (i == 0) {
+                    dx = particle.posX - sim.b_min[0];
+                    if (dx < 0) {
+                        particle.posX  = sim.b_min[0] - dx;
+                        particle.velX  = -particle.velX;
+                        particle.hvX = -particle.hvX;
+                    }
+
+                } else if (i == this->size_x - 1) {
+
+                    dx = sim.b_max[0] - particle.posX;
+                    if (dx < 0) {
+                        particle.posX  = sim.b_max[0] + dx;
+                        particle.velX  = -particle.velX;
+                        particle.hvX = -particle.hvX;
+                    }
+                }
+
+                // Collisions with y-axis bounds
+                if (j == 0) {
+
+                    dy = particle.posY - sim.b_min[1];
+                    if (dy < 0) {
+                        particle.posY  = sim.b_min[1] - dy;
+                        particle.velY  = -particle.velY;
+                        particle.hvY = -particle.hvY;
+                    }
+                } else if (j == this->size_y - 1) {
+                    dy = sim.b_max[1] - particle.posY;
+                    if (dy < 0) {
+                        particle.posY  = sim.b_max[1] + dy;
+                        particle.velY  = -particle.velY;
+                        particle.hvY = -particle.hvY;
+                    }
+                }
+
+                // Collisions with z-axis bounds
+                if (k == 0) {
+                    dz = particle.posZ - sim.b_min[2];
+                    if (dz < 0) {
+                        particle.posZ  = sim.b_min[2] - dz;
+                        particle.velZ  = -particle.velZ;
+                        particle.hvZ = -particle.hvZ;
+                    }
+                } else if (k == this->size_z - 1) {
+                    dz = sim.b_max[2] - particle.posZ;
+                    if (dz < 0) {
+                        particle.posZ  = sim.b_max[2] + dz;
+                        particle.velZ  = -particle.velZ;
+                        particle.hvZ = -particle.hvZ;
+                    }
+                }
+            }
+        }
+    }
+}

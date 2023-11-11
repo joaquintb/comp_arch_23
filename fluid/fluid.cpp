@@ -61,6 +61,8 @@ int main (int argc, char **argv) {
 
     grid.motion(sim);
 
+    grid.part_box_collisions(sim);
+
     // TRACE: check if initial population of grid was correct
     // Need to specify dir wrt to fluid executable
     const std::string fileName = "../../trz/small/motion-base-1.trz";
