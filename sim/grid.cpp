@@ -356,7 +356,7 @@ void Grid::part_collisions(Simulation &sim) {
         // Retrieve indexes (i, j, k) from block_id
         int k        = block_id / (this->size_x * this->size_y);
         int block_id_aux = block_id % (this->size_x * this->size_y);
-        int j        = block_id_aux / this->size_x;
+        int j        = (block_id_aux / this->size_x) % this->size_y;
         int i        = block_id_aux % this->size_x;
 
         // Boundary cases
