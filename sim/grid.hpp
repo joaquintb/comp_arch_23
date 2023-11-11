@@ -7,6 +7,7 @@
 #include "simulation.hpp"
 #include <set>
 #include <cmath>
+#include <algorithm>
 
 class Grid {
     public:
@@ -22,6 +23,7 @@ class Grid {
         void part_collisions(Simulation &sim);
         void motion(Simulation &sim);
         void part_box_collisions(Simulation &sim);
+        void repos(Simulation &sim);
     
     private:
         int size_x, size_y, size_z, n_particles, size;

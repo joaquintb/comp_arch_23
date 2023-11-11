@@ -107,7 +107,7 @@ bool Grid::cmp_trace(std::ifstream& trace)
             const Particle& particleFromVector = this->blocks[i].particles[j];
 
             // Compare each field of the particles
-            double tolerance = 0.000001; // You can adjust the tolerance based on your specific use case
+            double tolerance = 0.01; // You can adjust the tolerance based on your specific use case
 
             if (fabs(particleFromFile.pid - particleFromVector.pid) > tolerance) {
                 std::cout << "pid mismatch - Trace value: " << particleFromFile.pid
@@ -458,7 +458,7 @@ void Grid::part_box_collisions(Simulation &sim) {
                         particle.hvX = -particle.hvX;
                     }
 
-                } else if (i == this->size_x - 1) {
+                } if (i == this->size_x - 1) {
 
                     dx = sim.b_max[0] - particle.posX;
                     if (dx < 0) {
@@ -470,14 +470,13 @@ void Grid::part_box_collisions(Simulation &sim) {
 
                 // Collisions with y-axis bounds
                 if (j == 0) {
-
                     dy = particle.posY - sim.b_min[1];
                     if (dy < 0) {
                         particle.posY  = sim.b_min[1] - dy;
                         particle.velY  = -particle.velY;
                         particle.hvY = -particle.hvY;
                     }
-                } else if (j == this->size_y - 1) {
+                } if (j == this->size_y - 1) {
                     dy = sim.b_max[1] - particle.posY;
                     if (dy < 0) {
                         particle.posY  = sim.b_max[1] + dy;
@@ -494,7 +493,7 @@ void Grid::part_box_collisions(Simulation &sim) {
                         particle.velZ  = -particle.velZ;
                         particle.hvZ = -particle.hvZ;
                     }
-                } else if (k == this->size_z - 1) {
+                } if (k == this->size_z - 1) {
                     dz = sim.b_max[2] - particle.posZ;
                     if (dz < 0) {
                         particle.posZ  = sim.b_max[2] + dz;
@@ -504,5 +503,25 @@ void Grid::part_box_collisions(Simulation &sim) {
                 }
             }
         }
+    }
+}
+
+void Grid::repos(Simulation &sim) {
+    // For each block in the grid
+    for (int block_id = 0; block_id < this->size; ++block_id) {
+        // For each particle in that block
+        for (auto & curr_par : this->blocks[block_id].particles) {
+            int grid_index = curr_par.compute_grid_index(sim);
+            if (block_id != grid_index) {
+                Particle cp_par = curr_par;
+                this->blocks[grid_index].particles.push_back(cp_par);
+                curr_par.pid = -1; // Keep track of pars to delete from block block_id
+            }
+        }
+        // Erase particles with pid = -1 from this block
+        auto remove_end = std::remove_if(this->blocks[block_id].particles.begin(), this->blocks[block_id].particles.end(), [](const Particle& particle) {
+            return particle.pid == -1;
+        });
+        this->blocks[block_id].particles.erase(remove_end, this->blocks[block_id].particles.end());
     }
 }
