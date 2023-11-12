@@ -107,7 +107,7 @@ bool Grid::cmp_trace(std::ifstream& trace)
             const Particle& particleFromVector = this->blocks[i].particles[j];
 
             // Compare each field of the particles
-            double tolerance = 0.01; // You can adjust the tolerance based on your specific use case
+            double tolerance = 0; // You can adjust the tolerance based on your specific use case
 
             if (fabs(particleFromFile.pid - particleFromVector.pid) > tolerance) {
                 std::cout << "pid mismatch - Trace value: " << particleFromFile.pid
@@ -172,7 +172,10 @@ bool Grid::cmp_trace(std::ifstream& trace)
 
             if (fabs(particleFromFile.density - particleFromVector.density) > tolerance) {
                 std::cout << "density mismatch - Trace value: " << particleFromFile.density
-                        << ", Grid value: " << particleFromVector.density << "\nBlock: " << i << std::endl;
+                        << ", Grid value: " << particleFromVector.density << std::endl;
+                    
+                std::cout << "Particle: " << j << " - Block: " << i << std::endl;
+                std::cout << "Difference: " << fabs(particleFromFile.density - particleFromVector.density)  << "\n";
                 return false;
             }
 
@@ -205,6 +208,9 @@ bool Grid::cmp_trace(std::ifstream& trace)
 void Grid::increase_all_dens(Simulation& sim) {
 
     std::set<std::pair<int, int>> proc_pairs;
+    double sm_len = sim.get_sm_len();
+    double const hSquared = sm_len * sm_len;
+    double density_increase = 0;
 
     // For each block in the grid
     for (auto &block : this->blocks) {
@@ -222,24 +228,18 @@ void Grid::increase_all_dens(Simulation& sim) {
                     if (proc_pairs.find(particle_pair) == proc_pairs.end() and id_i != id_j) {
 
                         // ------------------- DENSITY OPS -------------------
-                        double density_increase = 0;
                         double diff_x = part_i.posX - part_j.posX;
                         double diff_y = part_i.posY - part_j.posY;
                         double diff_z = part_i.posZ - part_j.posZ;
 
                         double distanceSquared = (diff_x*diff_x) + (diff_y*diff_y) + (diff_z*diff_z);
 
-                        double sm_len = sim.get_sm_len();
-                        double const hSquared = sm_len * sm_len;
-
                         if (distanceSquared < hSquared) {
                             double hMinusDist     = hSquared - distanceSquared;
                             density_increase      = hMinusDist * hMinusDist * hMinusDist;
+                            part_i.density += density_increase;
+                            part_j.density += density_increase;
                         }
-
-                        part_i.density += density_increase;
-                        part_j.density += density_increase;
-
                         // ------------------- DENSITY OPS -------------------
 
                         // Pair processed

@@ -53,19 +53,19 @@ int main (int argc, char **argv) {
 
     grid.increase_all_dens(sim);
 
-    grid.trans_all_dens(sim);
+    // grid.trans_all_dens(sim);
 
-    grid.increase_all_accs(sim);
+    // grid.increase_all_accs(sim);
 
-    grid.part_collisions(sim);
+    // grid.part_collisions(sim);
 
-    grid.motion(sim);
+    // grid.motion(sim);
 
-    grid.part_box_collisions(sim);
+    // grid.part_box_collisions(sim);
 
     // TRACE: check if initial population of grid was correct
     // Need to specify dir wrt to fluid executable
-    const std::string fileName = "../../trz/small/boundint-base-1.trz";
+    const std::string fileName = "../../trz/small/densinc-base-1.trz";
     std::ifstream trace(fileName, std::ios::binary);
     grid.cmp_trace(trace);
     trace.close();
