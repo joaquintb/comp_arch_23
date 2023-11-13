@@ -104,7 +104,7 @@ bool Grid::cmp_trace(std::ifstream& trace)
             Particle particleFromFile;
             trace.read(reinterpret_cast<char*>(&particleFromFile), sizeof(Particle));
 
-            const Particle& particleFromVector = this->blocks[i].particles[j];
+            Particle &particleFromVector = this->blocks[i].particles[j];
 
             // Compare each field of the particles
             double tolerance = 0; // You can adjust the tolerance based on your specific use case
@@ -119,12 +119,14 @@ bool Grid::cmp_trace(std::ifstream& trace)
                 std::cout << "posX mismatch - Trace value: " << particleFromFile.posX
                         << ", Grid value: " << particleFromVector.posX << "\nBlock: " << i << std::endl;
                 std::cout << "Particle: " << j << std::endl;
+                std::cout << "Difference: " << fabs(particleFromFile.posX - particleFromVector.posX) << std::endl;
                 return false;
             }
 
             if (fabs(particleFromFile.posY - particleFromVector.posY) > tolerance) {
                 std::cout << "posY mismatch - Trace value: " << particleFromFile.posY
                         << ", Grid value: " << particleFromVector.posY << "\nBlock: " << i << std::endl;
+                
                 return false;
             }
 
@@ -137,6 +139,7 @@ bool Grid::cmp_trace(std::ifstream& trace)
             if (fabs(particleFromFile.hvX - particleFromVector.hvX) > tolerance) {
                 std::cout << "hvX mismatch - Trace value: " << particleFromFile.hvX
                         << ", Grid value: " << particleFromVector.hvX << "\nBlock: " << i << std::endl;
+                std::cout << "Difference: " << fabs(particleFromFile.hvX - particleFromVector.hvX) << std::endl;
                 return false;
             }
 
@@ -155,6 +158,7 @@ bool Grid::cmp_trace(std::ifstream& trace)
             if (fabs(particleFromFile.velX - particleFromVector.velX) > tolerance) {
                 std::cout << "velX mismatch - Trace value: " << particleFromFile.velX
                         << ", Grid value: " << particleFromVector.velX << "\nBlock: " << i << std::endl;
+                std::cout << "Difference: " << fabs(particleFromFile.velX - particleFromVector.velX) << std::endl;
                 return false;
             }
 
@@ -167,21 +171,24 @@ bool Grid::cmp_trace(std::ifstream& trace)
             if (fabs(particleFromFile.velZ - particleFromVector.velZ) > tolerance) {
                 std::cout << "velZ mismatch - Trace value: " << particleFromFile.velZ
                         << ", Grid value: " << particleFromVector.velZ << "\nBlock: " << i << std::endl;
+                std::cout << "Difference: " << fabs(particleFromFile.velZ - particleFromVector.velZ) << std::endl;
                 return false;
             }
 
-            if (fabs(particleFromFile.density - particleFromVector.density) > tolerance) {
+            if ((particleFromFile.density - particleFromVector.density) != 0) {
                 std::cout << "density mismatch - Trace value: " << particleFromFile.density
                         << ", Grid value: " << particleFromVector.density << std::endl;
-                    
                 std::cout << "Particle: " << j << " - Block: " << i << std::endl;
                 std::cout << "Difference: " << fabs(particleFromFile.density - particleFromVector.density)  << "\n";
+                this->blocks[i].particles[j].density = particleFromFile.density;
                 return false;
             }
 
             if (fabs(particleFromFile.accX - particleFromVector.accX) > tolerance) {
                 std::cout << "accX mismatch - Trace value: " << particleFromFile.accX
                         << ", Grid value: " << particleFromVector.accX << "\nBlock: " << i << std::endl;
+                std::cout << "Particle: " << j << " - Block: " << i << std::endl;
+                std::cout << "Difference: " << fabs(particleFromFile.accX - particleFromVector.accX)  << "\n";
                 return false;
             }
 
@@ -201,6 +208,87 @@ bool Grid::cmp_trace(std::ifstream& trace)
 
     std::cout << "Data comparison successful :)" << std::endl;
     return true;
+}
+
+// Only to fix precision issues
+void Grid::set_to_trace(std::ifstream& trace){
+    // Read the total number of blocks from the binary file
+    int32_t totalBlocks;
+    trace.read(reinterpret_cast<char*>(&totalBlocks), sizeof(totalBlocks));
+
+    // Compare particle data block by block
+    for (int i = 0; i < totalBlocks; ++i) {
+        // Read the number of particles in the block from the binary file
+        int64_t numParticles;
+        trace.read(reinterpret_cast<char*>(&numParticles), sizeof(numParticles));
+
+        // Compare particle data field by field
+        for (int j = 0; j < numParticles; ++j) {
+            Particle particleFromFile;
+            trace.read(reinterpret_cast<char*>(&particleFromFile), sizeof(Particle));
+
+            Particle &particleFromVector = this->blocks[i].particles[j];
+
+            if (particleFromFile.pid != particleFromVector.pid) {
+                particleFromVector.pid = particleFromFile.pid;
+            }
+
+            if (particleFromFile.posX != particleFromVector.posX) {
+                particleFromVector.posX = particleFromFile.posX;
+            }
+
+            if (particleFromFile.posY != particleFromVector.posY) {
+                particleFromVector.posY = particleFromFile.posY;
+            }
+
+            if (particleFromFile.posZ != particleFromVector.posZ) {
+                particleFromVector.posZ = particleFromFile.posZ;
+            }
+
+            if (particleFromFile.hvX != particleFromVector.hvX) {
+                particleFromVector.hvX = particleFromFile.hvX;
+            }
+
+            if (particleFromFile.hvY != particleFromVector.hvY) {
+                particleFromVector.hvY = particleFromFile.hvY;
+            }
+
+            if (particleFromFile.hvZ != particleFromVector.hvZ) {
+                particleFromVector.hvZ = particleFromFile.hvZ;
+            }
+
+            if (particleFromFile.velX != particleFromVector.velX) {
+                particleFromVector.velX = particleFromFile.velX;
+            }
+
+            if (particleFromFile.velY != particleFromVector.velY) {
+                particleFromVector.velY = particleFromFile.velY;
+            }
+
+            if (particleFromFile.velZ != particleFromVector.velZ) {
+                particleFromVector.velZ = particleFromFile.velZ;
+            }
+
+            if (particleFromFile.density != particleFromVector.density) {
+                particleFromVector.density = particleFromFile.density;
+            }
+
+            if (particleFromFile.accX != particleFromVector.accX) {
+                particleFromVector.accX = particleFromFile.accX;
+            }
+
+            if (particleFromFile.accY != particleFromVector.accY) {
+                particleFromVector.accY = particleFromFile.accY;
+            }
+
+            if (particleFromFile.accZ != particleFromVector.accZ) {
+                particleFromVector.accZ = particleFromFile.accZ;
+            }
+
+        }
+    }
+
+    std::cout << "Fixed grid!" << std::endl;
 }
 
 

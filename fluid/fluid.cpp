@@ -51,24 +51,45 @@ int main (int argc, char **argv) {
 
     inputFile.close();
 
-    grid.increase_all_dens(sim);
 
-    // grid.trans_all_dens(sim);
+    // ---------------------------------------------------------------------
+    grid.increase_all_dens(sim); // Precision problems of the order of 1e-28
 
-    // grid.increase_all_accs(sim);
-
-    // grid.part_collisions(sim);
-
-    // grid.motion(sim);
-
-    // grid.part_box_collisions(sim);
-
-    // TRACE: check if initial population of grid was correct
-    // Need to specify dir wrt to fluid executable
-    const std::string fileName = "../../trz/small/densinc-base-1.trz";
+    // Set grid to densinc trace
+    std::string fileName = "../../trz/small/densinc-base-1.trz";
     std::ifstream trace(fileName, std::ios::binary);
-    grid.cmp_trace(trace);
+    grid.set_to_trace(trace);
     trace.close();
 
+    grid.trans_all_dens(sim); // Works OK!
+
+    grid.increase_all_accs(sim); // Precision problems of the order 1e-13
+
+    // Set grid to acctransf
+    std::string fileName2 = "../../trz/small/acctransf-base-1.trz";
+    std::ifstream trace2(fileName2, std::ios::binary);
+    grid.set_to_trace(trace2);
+    trace2.close();
+
+    grid.part_collisions(sim); // Looks like small miscalculation (e.g., 0.0618364 vs 0.061815) or precision problem
+
+    // Set grid to partcol
+    std::string fileName3 = "../../trz/small/partcol-base-1.trz";
+    std::ifstream trace3(fileName3, std::ios::binary);
+    grid.set_to_trace(trace3);
+    trace3.close();
+
+    grid.motion(sim); // Precision problem order of 1e-16, 1e-17
+
+    // Set grid to motion
+    std::string fileName4 = "../../trz/small/motion-base-1.trz";
+    std::ifstream trace4(fileName4, std::ios::binary);
+    grid.set_to_trace(trace4);
+    trace4.close();
+
+    grid.part_box_collisions(sim); // Works OK!
+
     return 0;
+
+    // ---------------------------------------------------------------------
 }
