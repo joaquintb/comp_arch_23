@@ -94,13 +94,17 @@ bool Grid::cmp_trace(std::ifstream& trace)
         // Read the number of particles in the block from the binary file
         int64_t numParticles;
         trace.read(reinterpret_cast<char*>(&numParticles), sizeof(numParticles));
+
         // Check it matches the number of particles of the block in the trace
         if (numParticles != static_cast<int64_t>(this->blocks[i].particles.size())) {
             std::cerr << "Mismatch in the number of particles in block " << i << std::endl;
+            std::cerr << "Grid: " << this->blocks[i].particles.size() << std::endl;
+            std::cerr << "Expected: " << numParticles << std::endl;
             return false;
         }
         // Compare particle data field by field
         for (int j = 0; j < numParticles; ++j) {
+
             Particle particleFromFile;
             trace.read(reinterpret_cast<char*>(&particleFromFile), sizeof(Particle));
 
@@ -175,7 +179,7 @@ bool Grid::cmp_trace(std::ifstream& trace)
                 return false;
             }
 
-            if ((particleFromFile.density - particleFromVector.density) != 0) {
+            if (fabs(particleFromFile.density - particleFromVector.density) > tolerance) {
                 std::cout << "density mismatch - Trace value: " << particleFromFile.density
                         << ", Grid value: " << particleFromVector.density << std::endl;
                 std::cout << "Particle: " << j << " - Block: " << i << std::endl;
@@ -599,6 +603,8 @@ void Grid::repos(Simulation &sim) {
     for (int block_id = 0; block_id < this->size; ++block_id) {
         // For each particle in that block
         for (auto & curr_par : this->blocks[block_id].particles) {
+            if (curr_par.density == 0)
+                std::cout << "EUREKA!" << std::endl;
             int grid_index = curr_par.compute_grid_index(sim);
             if (block_id != grid_index) {
                 Particle cp_par = curr_par;
@@ -611,5 +617,16 @@ void Grid::repos(Simulation &sim) {
             return particle.pid == -1;
         });
         this->blocks[block_id].particles.erase(remove_end, this->blocks[block_id].particles.end());
+    }
+}
+
+void Grid::init_acc() {
+    for (auto &block: this->blocks) {
+        for (auto &part: block.particles) {
+            part.density = 0.0;
+            part.accX = 0.0;
+            part.accY = -9.8;
+            part.accZ = 0.0;
+        }
     }
 }

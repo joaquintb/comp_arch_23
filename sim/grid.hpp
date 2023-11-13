@@ -25,6 +25,7 @@ class Grid {
         void part_box_collisions(Simulation &sim);
         void repos(Simulation &sim);
         void set_to_trace(std::ifstream& trace);
+        void init_acc();
     
     private:
         int size_x, size_y, size_z, n_particles, size;
