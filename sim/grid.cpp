@@ -102,12 +102,13 @@ bool Grid::cmp_trace(std::ifstream& trace)
             std::cerr << "Expected: " << numParticles << std::endl;
             return false;
         }
+
         // Compare particle data field by field
         for (int j = 0; j < numParticles; ++j) {
 
             Particle particleFromFile;
             trace.read(reinterpret_cast<char*>(&particleFromFile), sizeof(Particle));
-
+            
             Particle &particleFromVector = this->blocks[i].particles[j];
 
             // Compare each field of the particles
@@ -599,26 +600,25 @@ void Grid::part_box_collisions(Simulation &sim) {
 }
 
 void Grid::repos(Simulation &sim) {
-    // For each block in the grid
-    for (int block_id = 0; block_id < this->size; ++block_id) {
-        // For each particle in that block
-        for (auto & curr_par : this->blocks[block_id].particles) {
-            if (curr_par.density == 0)
-                std::cout << "EUREKA!" << std::endl;
-            int grid_index = curr_par.compute_grid_index(sim);
-            if (block_id != grid_index) {
-                Particle cp_par = curr_par;
-                this->blocks[grid_index].particles.push_back(cp_par);
-                curr_par.pid = -1; // Keep track of pars to delete from block block_id
-            }
+
+    std::vector<Particle> all_part;
+
+    for (auto &block : this->blocks) {
+        for (auto &par : block.particles) {
+            all_part.push_back(par);
         }
-        // Erase particles with pid = -1 from this block
-        auto remove_end = std::remove_if(this->blocks[block_id].particles.begin(), this->blocks[block_id].particles.end(), [](const Particle& particle) {
-            return particle.pid == -1;
-        });
-        this->blocks[block_id].particles.erase(remove_end, this->blocks[block_id].particles.end());
+    }
+
+    for (auto &block : this->blocks) {
+        block.particles.clear();
+    }
+
+    for (auto &par : all_part) {
+        int grid_index = par.compute_grid_index(sim);
+        this->blocks[grid_index].particles.push_back(par);
     }
 }
+
 
 void Grid::init_acc() {
     for (auto &block: this->blocks) {

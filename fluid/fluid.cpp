@@ -90,12 +90,7 @@ int main (int argc, char **argv) {
 
     grid.repos(sim);
     grid.init_acc(); // !
-    // COMMENT: in traces, are repos and initacc files are actually the same!
-
-    std::string fileName5 = "../../trz/small/repos-base-2.trz";
-    std::ifstream trace5(fileName5, std::ios::binary);
-    grid.cmp_trace(trace5);
-    trace5.close();
+    // Works OK!
 
     return 0;
 
