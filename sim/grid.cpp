@@ -457,44 +457,43 @@ void Grid::part_collisions(Simulation &sim) {
         // For each particle in the current block
           for (auto & particle: this->blocks[block_id].particles) {
             if (i == 0) {
-                
-              particle.posX += particle.hvX * sim.delta_t;
-              delta_coll    = sim.d_p - (particle.posX - sim.b_min[0]);
+              double temp_x = particle.posX + particle.hvX * sim.delta_t;
+              delta_coll    = sim.d_p - (temp_x - sim.b_min[0]);
               if (delta_coll > delta_coll_max) {
                 particle.accX += (sim.s_c * delta_coll - sim.d_v * particle.velX);
               }
 
             } else if (i == this->size_x - 1) {
-              particle.posX += particle.hvX * sim.delta_t;
-              delta_coll    = sim.d_p - (sim.b_max[0] - particle.posX);
+              double temp_x = particle.posX + particle.hvX * sim.delta_t;
+              delta_coll    = sim.d_p - (sim.b_max[0] - temp_x);
               if (delta_coll > delta_coll_max) {
                 particle.accX -= (sim.s_c * delta_coll + sim.d_v * particle.velX);
               }
             }
 
             if (j == 0) {
-              particle.posY += particle.hvY * sim.delta_t;
-              delta_coll    = sim.d_p - (particle.posY - sim.b_min[1]);
+              double temp_y = particle.posY + particle.hvY * sim.delta_t;
+              delta_coll    = sim.d_p - (temp_y - sim.b_min[1]);
               if (delta_coll > delta_coll_max) {
                 particle.accY += (sim.s_c * delta_coll - sim.d_v * particle.velY);
               }
             } else if (j == this->size_y - 1) {
-              particle.posY += particle.hvY * sim.delta_t;
-              delta_coll    = sim.d_p - (sim.b_max[1] - particle.posY);
+              double temp_y = particle.posY + particle.hvY * sim.delta_t;
+              delta_coll    = sim.d_p - (sim.b_max[1] - temp_y);
               if (delta_coll > delta_coll_max) {
                 particle.accY -= (sim.s_c * delta_coll + sim.d_v * particle.velY);
               }
             }
 
             if (k == 0) {
-              particle.posZ += particle.hvZ * sim.delta_t;
-              delta_coll    = sim.d_p - (particle.posZ - sim.b_min[2]);
+              double temp_z = particle.posZ + particle.hvZ * sim.delta_t;
+              delta_coll    = sim.d_p - (temp_z- sim.b_min[2]);
               if (delta_coll > delta_coll_max) {
                 particle.accZ += (sim.s_c * delta_coll - sim.d_v * particle.velZ);
               }
             } else if (k == this->size_z - 1) {
-              particle.posZ += particle.hvZ * sim.delta_t;
-              delta_coll    = sim.d_p - (sim.b_max[2] - particle.posZ);
+              double temp_z = particle.posZ + particle.hvZ * sim.delta_t;
+              delta_coll    = sim.d_p - (sim.b_max[2] - temp_z);
               if (delta_coll > delta_coll_max) {
                 particle.accZ -= (sim.s_c * delta_coll + sim.d_v * particle.velZ);
               }
