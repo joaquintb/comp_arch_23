@@ -70,27 +70,21 @@ int main (int argc, char **argv) {
     grid.set_to_trace(trace2);
     trace2.close();
 
-    grid.part_collisions(sim); // Looks like small miscalculation (e.g., 0.0618364 vs 0.061815) or precision problem
+    grid.part_collisions(sim); // Works OK!
 
-    // Set grid to partcol
-    std::string fileName3 = "../../trz/small/partcol-base-1.trz";
-    std::ifstream trace3(fileName3, std::ios::binary);
-    grid.cmp_trace(trace3);
-    trace3.close();
+    grid.motion(sim); // Precision problem order of 1e-16, 1e-17
 
-    // grid.motion(sim); // Precision problem order of 1e-16, 1e-17
+    // Set grid to motion
+    std::string fileName4 = "../../trz/small/motion-base-1.trz";
+    std::ifstream trace4(fileName4, std::ios::binary);
+    grid.set_to_trace(trace4);
+    trace4.close();
 
-    // // Set grid to motion
-    // std::string fileName4 = "../../trz/small/motion-base-1.trz";
-    // std::ifstream trace4(fileName4, std::ios::binary);
-    // grid.set_to_trace(trace4);
-    // trace4.close();
+    grid.part_box_collisions(sim); // Works OK!
 
-    // grid.part_box_collisions(sim); // Works OK!
-
-    // grid.repos(sim);
-    // grid.init_acc(); // !
-    // // Works OK!
+    grid.repos(sim);
+    grid.init_acc(); // !
+    // Works OK!
 
     return 0;
 
