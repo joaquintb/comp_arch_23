@@ -14,6 +14,7 @@ public:
     double const d_v = 128.0;
     double const mew = 0.4;
     double const d_p = 0.0002;
+    double const delta_t = 0.001;
     double n_x, n_y, n_z;
 
     double const get_ppm();
@@ -28,7 +29,7 @@ public:
 
     Simulation(float ppm, int num_p);
     void checkValues();
-    void printValues();
+    void printValues(int);
 
 private:
     double ppm, sm_len, mass; 

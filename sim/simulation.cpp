@@ -40,12 +40,12 @@ void Simulation::checkValues () {
     // Pending (else if) if num_p == number of particles read in file
 }
 
-void Simulation::printValues() {
+void Simulation::printValues(const int n_blocks) {
     std::cout << "Number of particles: " << this->get_num_p() << '\n';
     std::cout << "Particles per meter: " << this->get_ppm() << '\n';
     std::cout << "Smoothing length: " << this-> get_sm_len() << '\n';
     std::cout << "Particle mass: " << this->mass << '\n';
     std::cout << "Grid size: " << this->n_x << " x " << this->n_y << " x " << this->n_z << '\n';
-    //std::cout << "Number of blocks: " << '\n';
+    std::cout << "Number of blocks: " << n_blocks << '\n';
     std::cout << "Block size: " << this->size_blocks[0] << " x " << this->size_blocks[1] << " x " << this->size_blocks[2] << '\n';
 }

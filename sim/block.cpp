@@ -55,3 +55,7 @@ int Particle::compute_grid_index(Simulation& sim) {
     int grid_index = i + sim.n_x * (j + sim.n_y * k);
     return grid_index;
 }
+
+Block::Block (int bid){
+    this->bid = bid;
+}

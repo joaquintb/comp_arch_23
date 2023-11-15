@@ -5,6 +5,10 @@
 #include <iostream>
 #include "block.hpp"
 #include "simulation.hpp"
+#include <set>
+#include <cmath>
+#include <algorithm>
+#include <chrono>
 
 class Grid {
     public:
@@ -12,6 +16,17 @@ class Grid {
         void populate(Simulation& sim, std::ifstream& inputFile);
         void display_grid();
         bool cmp_trace(std::ifstream& trace);
+        void set_neighbors();
+        void test_neighbors();
+        void increase_all_dens(Simulation& sim);
+        void trans_all_dens(Simulation &sim);
+        void increase_all_accs(Simulation &sim);
+        void part_collisions(Simulation &sim);
+        void motion(Simulation &sim);
+        void part_box_collisions(Simulation &sim);
+        void repos(Simulation &sim);
+        void set_to_trace(std::ifstream& trace);
+        void init_acc();
     
     private:
         int size_x, size_y, size_z, n_particles, size;
