@@ -302,7 +302,7 @@ void Grid::increase_all_dens(Simulation& sim) {
 
     std::set<std::pair<int, int>> proc_pairs;
     double sm_len = sim.get_sm_len();
-    double const hSquared = sm_len * sm_len;
+    double const hSquared = std::pow(sm_len, 2);
     double density_increase = 0;
 
     // For each block in the grid
@@ -321,15 +321,18 @@ void Grid::increase_all_dens(Simulation& sim) {
                     if (proc_pairs.find(particle_pair) == proc_pairs.end() and id_i != id_j) {
 
                         // ------------------- DENSITY OPS -------------------
-                        double diff_x = part_i.posX - part_j.posX;
-                        double diff_y = part_i.posY - part_j.posY;
-                        double diff_z = part_i.posZ - part_j.posZ;
+                        // double diff_x = part_i.posX - part_j.posX;
+                        // double diff_y = part_i.posY - part_j.posY;
+                        // double diff_z = part_i.posZ - part_j.posZ;
 
-                        double distanceSquared = (diff_x*diff_x) + (diff_y*diff_y) + (diff_z*diff_z);
+                        // double distanceSquared = (diff_x*diff_x) + (diff_y*diff_y) + (diff_z*diff_z);
+
+                        double distanceSquared = std::pow(part_i.posX - part_j.posX, 2) + std::pow(part_i.posY - part_j.posY, 2) + std::pow(part_i.posZ - part_j.posZ, 2);
 
                         if (distanceSquared < hSquared) {
-                            double hMinusDist     = hSquared - distanceSquared;
-                            density_increase      = hMinusDist * hMinusDist * hMinusDist;
+                            // double hMinusDist     = hSquared - distanceSquared;
+                            // density_increase      = hMinusDist * hMinusDist * hMinusDist;
+                            density_increase = std::pow(hSquared - distanceSquared, 3);
                             part_i.density += density_increase;
                             part_j.density += density_increase;
                         }
@@ -519,6 +522,7 @@ void Grid::motion(Simulation &sim) {
             particle.hvX = particle.hvX + particle.accX * sim.delta_t;
             particle.hvY = particle.hvY + particle.accY * sim.delta_t;
             particle.hvZ = particle.hvZ + particle.accZ * sim.delta_t;
+
         }
     }
 }
