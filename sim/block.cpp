@@ -17,6 +17,33 @@ void Particle::inc_part_dens(Particle & part_j, double const hSquared) {
     }
 }
 
+void Particle::inc_part_acc(Particle & part_j, Simulation & sim, double const distanceSquared) {
+    double acc_inc_x, acc_inc_y, acc_inc_z;
+    double const max_dis = 1e-12;
+    double dist_ij       = sqrt(std::max(distanceSquared, max_dis));
+    double fact_0_x = this->posX - part_j.posX;
+    double fact_0_y = this->posY - part_j.posY;
+    double fact_0_z = this->posZ - part_j.posZ;
+    double fact_4_x = part_j.velX - this->velX;
+    double fact_4_y = part_j.velY - this->velY;
+    double fact_4_z = part_j.velZ - this->velZ;
+    double fact_2 = (sim.get_sm_len() - dist_ij) * (sim.get_sm_len() - dist_ij) / dist_ij;
+    double fact_3 = this->density + part_j.density - 2 * sim.fluid_density;
+    acc_inc_x = fact_0_x * sim.common_factor_acc * sim.fact_1_acc * fact_2 * fact_3 +
+                fact_4_x * sim.common_factor_acc * sim.fact_5_acc;
+    acc_inc_y = fact_0_y * sim.common_factor_acc * sim.fact_1_acc * fact_2 * fact_3 +
+                fact_4_y * sim.common_factor_acc * sim.fact_5_acc;
+    acc_inc_z = fact_0_z * sim.common_factor_acc * sim.fact_1_acc * fact_2 * fact_3 +
+                fact_4_z * sim.common_factor_acc * sim.fact_5_acc;
+
+    this->accX += acc_inc_x / (this->density * part_j.density);
+    this->accY += acc_inc_y / (this->density * part_j.density);
+    this->accZ += acc_inc_z / (this->density * part_j.density);
+    part_j.accX -= acc_inc_x / (this->density * part_j.density);
+    part_j.accY -= acc_inc_y / (this->density * part_j.density);
+    part_j.accZ -= acc_inc_z / (this->density * part_j.density);
+}
+
 // Particle constructor
 Particle::Particle(std::ifstream& inputFile, int pid) {
     this->pid = pid;
