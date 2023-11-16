@@ -169,13 +169,19 @@ bool Grid::cmp_trace(std::ifstream & trace) {
 
       if (fabs(particleFromFile.accY - particleFromVector.accY) > tolerance) {
         std::cout << "accY mismatch - Trace value: " << particleFromFile.accY
-                  << ", Grid value: " << particleFromVector.accY << "\nBlock: " << i << std::endl;
+                  << ", Grid value: " << particleFromVector.accY << "\n";
+        std::cout << "Particle: " << j << " - Block: " << i << std::endl;
+        std::cout << "Difference: " << fabs(particleFromFile.accY - particleFromVector.accY)
+                  << std::endl;
         return false;
       }
 
       if (fabs(particleFromFile.accZ - particleFromVector.accZ) > tolerance) {
         std::cout << "accZ mismatch - Trace value: " << particleFromFile.accZ
-                  << ", Grid value: " << particleFromVector.accZ << "\nBlock: " << i << std::endl;
+                  << ", Grid value: " << particleFromVector.accZ << "\n";
+        std::cout << "Particle: " << j << " - Block: " << i << std::endl;
+        std::cout << "Difference: " << fabs(particleFromFile.accZ - particleFromVector.accZ)
+                  << std::endl;
         return false;
       }
     }
@@ -274,12 +280,14 @@ void Grid::increase_all_dens(Simulation & sim) {
         for (auto & part_j : neigh_ptr->particles) {  // Iterate neigh particles
           int id_i = part_i.pid;
           int id_j = part_j.pid;
-          // (i,j) equivalent to (j,i)
-          std::pair<int, int> particle_pair(std::min(id_i, id_j), std::max(id_i, id_j));
-          // If not a processed pair
-          if (proc_pairs.find(particle_pair) == proc_pairs.end() and id_i != id_j) {
-            part_i.inc_part_dens(part_j, hSquared);
-            proc_pairs.insert(particle_pair);  // Pair processed, keep track
+          if (id_i != id_j) {
+            // (i,j) equivalent to (j,i)
+            std::pair<int, int> particle_pair(std::min(id_i, id_j), std::max(id_i, id_j));
+            // If not a processed pair
+            if (proc_pairs.find(particle_pair) == proc_pairs.end()) {
+              part_i.inc_part_dens(part_j, hSquared);
+              proc_pairs.insert(particle_pair);  // Pair processed, keep track
+            }
           }
         }
       }
@@ -291,7 +299,6 @@ void Grid::trans_all_dens(Simulation & sim) {
   double const sm_len         = sim.get_sm_len();
   double const h_pow6         = pow(sm_len, 6);
   double const prefactor_dens = (315 * sim.get_mass()) / (64 * std::numbers::pi * pow(sm_len, 9));
-
   // For each block in the grid
   for (auto & block : this->blocks) {
     // Iterate over particles within the current block
@@ -302,77 +309,25 @@ void Grid::trans_all_dens(Simulation & sim) {
   }
 }
 
+// distanceSquared change
 void Grid::increase_all_accs(Simulation & sim) {
   std::set<std::pair<int, int>> proc_pairs;
-
-  // Params and constants (future attributes)
-  double sm_len              = sim.get_sm_len();
-  double const hSquared      = sm_len * sm_len;
-  double const f_dens        = sim.fluid_density;
-  double const common_factor = 45 / (std::numbers::pi * std::pow(sm_len, 6));
-  double const fact_1        = sim.get_mass() * sim.p_s / 2;
-  double const fact_5        = sim.mew * sim.get_mass();
-
-  // For each block in the grid
   for (auto & block : this->blocks) {
-    // Iterate over particles within the current block
     for (auto & part_i : block.particles) {
-      // Iterate over neighbor block pointers
       for (auto & neigh_ptr : block.neighbours) {
-        // Iterate over particles within the neighboring block
         for (auto & part_j : neigh_ptr->particles) {
           int id_i = part_i.pid;
           int id_j = part_j.pid;
           if (id_i != id_j) {
-            double diff_x          = part_i.posX - part_j.posX;
-            double diff_y          = part_i.posY - part_j.posY;
-            double diff_z          = part_i.posZ - part_j.posZ;
-            double distanceSquared = (diff_x * diff_x) + (diff_y * diff_y) + (diff_z * diff_z);
-
-            if (distanceSquared < hSquared) {
-              // Acc. computations
+            double distanceSquared = std::pow(part_i.posX - part_j.posX, 2) +
+                                     std::pow(part_i.posY - part_j.posY, 2) +
+                                     std::pow(part_i.posZ - part_j.posZ, 2);
+            if (distanceSquared < sim.sm_len_sq) {
               // (i,j) equivalent to (j,i)
               std::pair<int, int> particle_pair(std::min(id_i, id_j), std::max(id_i, id_j));
-              // If not a processed pair
               if (proc_pairs.find(particle_pair) == proc_pairs.end()) {
-                // ------------------- ACC OPS -------------------
-                double acc_inc_x = 0;
-                double acc_inc_y = 0;
-                double acc_inc_z = 0;
-
-                double const max_dis = 1e-12;
-                double dist_ij       = sqrt(std::max(distanceSquared, max_dis));
-
-                double fact_0_x = part_i.posX - part_j.posX;
-                double fact_0_y = part_i.posY - part_j.posY;
-                double fact_0_z = part_i.posZ - part_j.posZ;
-
-                double fact_4_x = part_j.velX - part_i.velX;
-                double fact_4_y = part_j.velY - part_i.velY;
-                double fact_4_z = part_j.velZ - part_i.velZ;
-
-                double fact_2 = (sm_len - dist_ij) * (sm_len - dist_ij) / dist_ij;
-                double fact_3 = part_i.density + part_j.density - 2 * f_dens;
-
-                acc_inc_x = fact_0_x * common_factor * fact_1 * fact_2 * fact_3 +
-                            fact_4_x * common_factor * fact_5;
-                acc_inc_y = fact_0_y * common_factor * fact_1 * fact_2 * fact_3 +
-                            fact_4_y * common_factor * fact_5;
-                acc_inc_z = fact_0_z * common_factor * fact_1 * fact_2 * fact_3 +
-                            fact_4_z * common_factor * fact_5;
-
-                // Update acc
-                part_i.accX += acc_inc_x / (part_i.density * part_j.density);
-                part_i.accY += acc_inc_y / (part_i.density * part_j.density);
-                part_i.accZ += acc_inc_z / (part_i.density * part_j.density);
-
-                part_j.accX -= acc_inc_x / (part_i.density * part_j.density);
-                part_j.accY -= acc_inc_y / (part_i.density * part_j.density);
-                part_j.accZ -= acc_inc_z / (part_i.density * part_j.density);
-                // ------------------- ACC OPS -------------------
-
-                // Pair processed
-                proc_pairs.insert(particle_pair);
+                part_i.inc_part_acc(part_j, sim, distanceSquared);
+                proc_pairs.insert(particle_pair);  // Pair processed
               }
             }
           }
