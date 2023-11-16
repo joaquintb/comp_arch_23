@@ -14,10 +14,8 @@ class Grid {
     public:
         Grid(int size_x, int size_y, int size_z);
         void populate(Simulation& sim, std::ifstream& inputFile);
-        void display_grid();
         bool cmp_trace(std::ifstream& trace);
         void set_neighbors();
-        void test_neighbors();
         void increase_all_dens(Simulation& sim);
         void trans_all_dens(Simulation &sim);
         void increase_all_accs(Simulation &sim);
