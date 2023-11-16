@@ -49,7 +49,16 @@ int main (int argc, char **argv) {
     grid.set_neighbors();
     // grid.test_neighbors();
 
+    grid.increase_all_dens(sim);
+
+    std::string fileName0 = "../../trz/small/densinc-base-1.trz";
+    std::ifstream trace0(fileName0, std::ios::binary);
+    grid.cmp_trace(trace0);
+    trace0.close();
+
     inputFile.close();
+
+    return 0;
 
     // ---------------------------------------------------------------------
     grid.increase_all_dens(sim); // Precision problems of the order of 1e-28
@@ -57,34 +66,34 @@ int main (int argc, char **argv) {
     // Set grid to densinc trace
     std::string fileName = "../../trz/small/densinc-base-1.trz";
     std::ifstream trace(fileName, std::ios::binary);
-    grid.set_to_trace(trace);
+    grid.cmp_trace(trace);
     trace.close();
 
-    grid.trans_all_dens(sim); // Works OK!
+    // grid.trans_all_dens(sim); // Works OK!
 
-    grid.increase_all_accs(sim); // Precision problems of the order 1e-13
+    // grid.increase_all_accs(sim); // Precision problems of the order 1e-13
 
-    // Set grid to acctransf
-    std::string fileName2 = "../../trz/small/acctransf-base-1.trz";
-    std::ifstream trace2(fileName2, std::ios::binary);
-    grid.set_to_trace(trace2);
-    trace2.close();
+    // // Set grid to acctransf
+    // std::string fileName2 = "../../trz/small/acctransf-base-1.trz";
+    // std::ifstream trace2(fileName2, std::ios::binary);
+    // grid.set_to_trace(trace2);
+    // trace2.close();
 
-    grid.part_collisions(sim); // Works OK!
+    // grid.part_collisions(sim); // Works OK!
 
-    grid.motion(sim); // Precision problem order of 1e-16, 1e-17
+    // grid.motion(sim); // Precision problem order of 1e-16, 1e-17
 
-    // Set grid to motion
-    std::string fileName4 = "../../trz/small/motion-base-1.trz";
-    std::ifstream trace4(fileName4, std::ios::binary);
-    grid.set_to_trace(trace4);
-    trace4.close();
+    // // Set grid to motion
+    // std::string fileName4 = "../../trz/small/motion-base-1.trz";
+    // std::ifstream trace4(fileName4, std::ios::binary);
+    // grid.set_to_trace(trace4);
+    // trace4.close();
 
-    grid.part_box_collisions(sim); // Works OK!
+    // grid.part_box_collisions(sim); // Works OK!
 
-    grid.repos(sim);
-    grid.init_acc(); // !
-    // Works OK!
+    // grid.repos(sim);
+    // grid.init_acc(); // !
+    // // Works OK!
 
     return 0;
 
