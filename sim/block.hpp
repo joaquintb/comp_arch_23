@@ -22,6 +22,8 @@ struct Particle{
 
     void write_particle_trace(std::ofstream& outputFile);
 
+    void inc_part_dens (Particle & part_j, double const hSquared);
+
     template <typename T>
     requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
     T read_binary_value(std::istream & is) {
@@ -53,8 +55,8 @@ struct Particle{
 class Block{
     // Attributes 
 public:
-    Block (int bid);
-    int bid;
+    Block (int bid, int blocks_x, int blocks_y, int blocks_z);
+    int bid, index_i, index_j, index_k;
     std::vector<Particle> particles;
     std::vector<Block*> neighbours; // max size of 26
 
