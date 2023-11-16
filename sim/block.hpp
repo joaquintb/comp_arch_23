@@ -24,6 +24,8 @@ struct Particle{
 
     void inc_part_dens (Particle & part_j, double const hSquared);
 
+    void inc_part_acc (Particle &part_j, Simulation & sim, double const distanceSquared);
+
     template <typename T>
     requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
     T read_binary_value(std::istream & is) {
