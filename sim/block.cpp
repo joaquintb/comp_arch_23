@@ -4,6 +4,19 @@
 Particle::Particle(){
 }
 
+void Particle::inc_part_dens(Particle & part_j, double const hSquared) {
+    double density_increase;
+    // If not a processed pair
+    double distanceSquared = std::pow(this->posX - part_j.posX, 2) +
+                             std::pow(this->posY - part_j.posY, 2) +
+                             std::pow(this->posZ - part_j.posZ, 2);
+    if (distanceSquared < hSquared) {
+      density_increase  = std::pow(hSquared - distanceSquared, 3);
+      this->density   += density_increase;
+      part_j.density   += density_increase;
+    }
+}
+
 // Particle constructor
 Particle::Particle(std::ifstream& inputFile, int pid) {
     this->pid = pid;
@@ -56,6 +69,10 @@ int Particle::compute_grid_index(Simulation& sim) {
     return grid_index;
 }
 
-Block::Block (int bid){
+Block::Block (int bid, int blocks_x, int blocks_y, int blocks_z){
     this->bid = bid;
+    this->index_k  = bid / (blocks_x * blocks_y);
+    int block_id_aux = bid % (blocks_x * blocks_y);
+    this->index_j  = block_id_aux / blocks_x;
+    this->index_i    = block_id_aux % blocks_x;
 }
