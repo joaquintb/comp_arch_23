@@ -5,9 +5,10 @@
 #include <fstream>
 
 #include "simulation.hpp"
+#include "util.hpp"
 
 struct Particle{
-    int64_t pid;
+    long pid;
     double posX, posY, posZ;
     double hvX, hvY, hvZ;
     double velX, velY, velZ;
@@ -68,5 +69,19 @@ public:
     void process_collisions();
     void move_particles(); 
     void process_boundaries();
+
+    void block_part_col_xmin(Simulation &sim); // i = 0
+    void block_part_col_xmax(Simulation &sim); // i = nx -1
+    void block_part_col_ymin(Simulation &sim); // j = 0
+    void block_part_col_ymax(Simulation &sim); // j = ny -1
+    void block_part_col_zmin(Simulation &sim); // k = 0
+    void block_part_col_zmax(Simulation &sim); // k = nz -1
+
+    void boundint_xmin(Simulation &sim);
+    void boundint_xmax(Simulation &sim);
+    void boundint_ymin(Simulation &sim);
+    void boundint_ymax(Simulation &sim);
+    void boundint_zmin(Simulation &sim);
+    void boundint_zmax(Simulation &sim);
 };
 #endif //COMP_ARCH_23_BLOCK_HPP
