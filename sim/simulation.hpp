@@ -16,6 +16,12 @@ public:
     double const d_p = 0.0002;
     double const delta_t = 0.001;
     double n_x, n_y, n_z;
+    double sm_len_sq;
+    // Factors for acceleration increase
+    double common_factor_acc;
+    double fact_1_acc;
+    double fact_5_acc;
+
 
     double const get_ppm();
     int const get_num_p();
