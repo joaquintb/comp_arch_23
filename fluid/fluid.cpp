@@ -47,18 +47,8 @@ int main (int argc, char **argv) {
     grid.populate(sim, inputFile);
     // Add neighbor blocks to all blocks
     grid.set_neighbors();
-    // grid.test_neighbors();
-
-    grid.increase_all_dens(sim);
-
-    std::string fileName0 = "../../trz/small/densinc-base-1.trz";
-    std::ifstream trace0(fileName0, std::ios::binary);
-    grid.cmp_trace(trace0);
-    trace0.close();
 
     inputFile.close();
-
-    return 0;
 
     // ---------------------------------------------------------------------
     grid.increase_all_dens(sim); // Precision problems of the order of 1e-28
@@ -66,18 +56,20 @@ int main (int argc, char **argv) {
     // Set grid to densinc trace
     std::string fileName = "../../trz/small/densinc-base-1.trz";
     std::ifstream trace(fileName, std::ios::binary);
-    grid.cmp_trace(trace);
+    grid.set_to_trace(trace);
     trace.close();
 
-    // grid.trans_all_dens(sim); // Works OK!
+    grid.trans_all_dens(sim); // Works OK!
 
-    // grid.increase_all_accs(sim); // Precision problems of the order 1e-13
+    grid.increase_all_accs(sim); // Precision problems of the order 1e-13
 
-    // // Set grid to acctransf
-    // std::string fileName2 = "../../trz/small/acctransf-base-1.trz";
-    // std::ifstream trace2(fileName2, std::ios::binary);
-    // grid.set_to_trace(trace2);
-    // trace2.close();
+    // Set grid to acctransf
+    std::string fileName2 = "../../trz/small/acctransf-base-1.trz";
+    std::ifstream trace2(fileName2, std::ios::binary);
+    grid.cmp_trace(trace2);
+    trace2.close();
+
+    return 0;
 
     // grid.part_collisions(sim); // Works OK!
 
