@@ -30,9 +30,14 @@ Simulation::Simulation(float ppm, int num_p) {
     this->size_blocks = {(this->b_max[0] - this->b_min[0]) / this->n_x, 
                          (this->b_max[1] - this->b_min[1]) / this->n_y,
                          (this->b_max[2] - this->b_min[2]) / this->n_z};
+
+    this->sm_len_sq = std::pow(this->sm_len, 2);
+    this->common_factor_acc = 45.0 / (std::numbers::pi * std::pow(this->sm_len, 6));
+    this->fact_1_acc        = this->mass * this->p_s * 0.5;
+    this->fact_5_acc        = this->mew * this->mass;
 };
 
-void Simulation::checkValues () {
+void Simulation::checkValues() {
     if(this->get_num_p() <= 0){
         std::cerr << "Error: Invalid number of particles: " << this->get_num_p() << ".\n";
         std::exit(-5);
