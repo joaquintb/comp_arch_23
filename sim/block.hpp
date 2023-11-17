@@ -21,7 +21,7 @@ struct Particle{
 
     int compute_grid_index(Simulation& sim);
 
-    void write_particle_trace(std::ofstream& outputFile);
+    void write_particle_output(std::ofstream& outputFile);
 
     void inc_part_dens (Particle & part_j, double const hSquared);
 
