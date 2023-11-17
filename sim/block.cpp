@@ -61,22 +61,17 @@ Particle::Particle(std::ifstream & inputFile, int pid) {
   this->accZ    = 0;
 }
 
-// Function to write Particle attributes in double precision
-void Particle::write_particle_trace(std::ofstream & outputFile) {
-  this->write_binary_value(this->pid, outputFile);
-  this->write_binary_value(this->posX, outputFile);
-  this->write_binary_value(this->posY, outputFile);
-  this->write_binary_value(this->posZ, outputFile);
-  this->write_binary_value(this->hvX, outputFile);
-  this->write_binary_value(this->hvY, outputFile);
-  this->write_binary_value(this->hvZ, outputFile);
-  this->write_binary_value(this->velX, outputFile);
-  this->write_binary_value(this->velY, outputFile);
-  this->write_binary_value(this->velZ, outputFile);
-  this->write_binary_value(this->density, outputFile);
-  this->write_binary_value(this->accX, outputFile);
-  this->write_binary_value(this->accY, outputFile);
-  this->write_binary_value(this->accZ, outputFile);
+// Function to write Particle attributes in float precision
+void Particle::write_particle_output(std::ofstream & outputFile) {
+  this->write_binary_value(static_cast<float>(this->posX), outputFile);
+  this->write_binary_value(static_cast<float>(this->posY), outputFile);
+  this->write_binary_value(static_cast<float>(this->posZ), outputFile);
+  this->write_binary_value(static_cast<float>(this->hvX), outputFile);
+  this->write_binary_value(static_cast<float>(this->hvY), outputFile);
+  this->write_binary_value(static_cast<float>(this->hvZ), outputFile);
+  this->write_binary_value(static_cast<float>(this->velX), outputFile);
+  this->write_binary_value(static_cast<float>(this->velY), outputFile);
+  this->write_binary_value(static_cast<float>(this->velZ), outputFile);
 }
 
 int Particle::compute_grid_index(Simulation & sim) {
