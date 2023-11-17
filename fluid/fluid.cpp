@@ -1,102 +1,63 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <cmath>
-#include <memory>
-#include <algorithm>
-#include <numbers>
-#include <span>
-
 #include "../sim/block.hpp"
-#include "../sim/progargs.hpp"
-#include "../sim/simulation.hpp"
 #include "../sim/grid.hpp"
-#include "../sim/util.hpp"
+#include "../sim/progargs.hpp"
+#include <cmath>
 
-int main (int argc, char **argv) {
-    // Input handling
-    inputTest(argc, argv);
+int main(int argc, char ** argv) {
+  // Input handling
+  // inputTest(argc, argv);
 
-    // Open binary file and read ppm and num_p
-    std::span const args_view{argv, static_cast<std::size_t>(argc)};
-    std::vector<std::string> const arguments{args_view.begin() + 1, args_view.end()};
-    std::ifstream inputFile(arguments[1], std::ios::binary);
+  // Open binary file and read ppm and num_p
+  std::span const args_view{argv, static_cast<std::size_t>(argc)};
+  std::vector<std::string> const arguments{args_view.begin() + 1, args_view.end()};
+  std::ifstream inputFile(arguments[1], std::ios::binary);
+  std::ofstream outputFile(arguments[2], std::ios::binary | std::ios::trunc);
+  int n_steps = std::stoi(arguments[0]);
 
-    float ppm;
-    int num_p;
+  float ppm;
+  int num_p;
 
-    inputFile.read(reinterpret_cast<char*>(&ppm), sizeof(float));
-    inputFile.read(reinterpret_cast<char*>(&num_p), sizeof(int));
+  inputFile.read(reinterpret_cast<char *>(&ppm), sizeof(float));
+  inputFile.read(reinterpret_cast<char *>(&num_p), sizeof(int));
 
-    // Create simulation 
-    Simulation sim = Simulation(ppm, num_p);
+  // Create simulation
+  Simulation sim = Simulation(ppm, num_p);
 
-    sim.checkValues(); // Check num_p is correct
+  sim.check_positive_particles();  // Check number of particles > 0
 
-    int const nx = floor((sim.b_max[0] - sim.b_min[0]) / sim.get_sm_len());
-    int const ny = floor((sim.b_max[1] - sim.b_min[1]) / sim.get_sm_len());
-    int const nz = floor((sim.b_max[2] - sim.b_min[2]) / sim.get_sm_len());
-    int const n_blocks = nx * ny * nz;
+  int const nx       = floor((sim.b_max[0] - sim.b_min[0]) / sim.get_sm_len());
+  int const ny       = floor((sim.b_max[1] - sim.b_min[1]) / sim.get_sm_len());
+  int const nz       = floor((sim.b_max[2] - sim.b_min[2]) / sim.get_sm_len());
+  int const n_blocks = nx * ny * nz;
 
-    sim.printValues(n_blocks); // Print initial attributes of simulation (successful input)
+  sim.print_sim_values(n_blocks);  // Print initial attributes of simulation (successful input)
 
-    // Create grid
-    Grid grid = Grid(nx, ny, nz);
+  // Create grid
+  Grid grid = Grid(nx, ny, nz);
+  grid.populate(sim, inputFile);
+  grid.set_neighbors();
 
-    // Add blocks to grid 
-    grid.populate(sim, inputFile);
-    // Add neighbor blocks to all blocks
-    grid.set_neighbors();
+  inputFile.close();
 
-    inputFile.close();
+  for (int time_step = 0; time_step < n_steps; ++time_step) {
+    if (time_step > 0) {
+      grid.repos(sim);
+      grid.init_acc();
+    }
 
-    // ---------------------------------------------------------------------
-    grid.increase_all_dens(sim); // Precision problems of the order of 1e-28
+    grid.increase_all_dens(sim);
+    grid.trans_all_dens(sim);
+    grid.increase_all_accs(sim);
+    grid.part_collisions(sim);
+    grid.motion(sim);
+    grid.part_box_collisions(sim);
+  }
 
-    // Set grid to densinc trace
-    std::string fileName = "../../trz/small/densinc-base-1.trz";
-    std::ifstream trace(fileName, std::ios::binary);
-    grid.set_to_trace(trace);
-    trace.close();
+  outputFile.write(reinterpret_cast<char const *>(&ppm), sizeof(float));
+  outputFile.write(reinterpret_cast<char const *>(&num_p), sizeof(int));
+  grid.gen_output(outputFile);
 
-    grid.trans_all_dens(sim); // Works OK!
+  outputFile.close();
 
-    grid.increase_all_accs(sim); // Precision problems of the order 1e-13
-
-    // Set grid to acctransf
-    std::string fileName2 = "../../trz/small/acctransf-base-1.trz";
-    std::ifstream trace2(fileName2, std::ios::binary);
-    grid.set_to_trace(trace2);
-    trace2.close();
-
-    grid.part_collisions(sim); // Works OK!
-    std::string fileName3 = "../../trz/small/partcol-base-1.trz";
-    std::ifstream trace3(fileName3, std::ios::binary);
-    grid.cmp_trace(trace3);
-    trace3.close();
-
-    grid.motion(sim); // Precision problem order of 1e-16, 1e-17
-
-    // Set grid to motion
-    std::string fileName4 = "../../trz/small/motion-base-1.trz";
-    std::ifstream trace4(fileName4, std::ios::binary);
-    grid.set_to_trace(trace4);
-    trace4.close();
-
-    grid.part_box_collisions(sim); // Works OK!
-
-    std::string fileName5 = "../../trz/small/boundint-base-1.trz";
-    std::ifstream trace5(fileName5, std::ios::binary);
-    grid.cmp_trace(trace5);
-    trace5.close();
-
-    return 0;
-
-    // grid.repos(sim);
-    // grid.init_acc(); // !
-    // // Works OK!
-
-    return 0;
-
-    // ---------------------------------------------------------------------
+  return 0;
 }
