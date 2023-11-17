@@ -34,8 +34,8 @@ public:
     std::vector<double> size_blocks;
 
     Simulation(float ppm, int num_p);
-    void checkValues();
-    void printValues(int);
+    void check_positive_particles();
+    void print_sim_values(int);
 
 private:
     double ppm, sm_len, mass; 
