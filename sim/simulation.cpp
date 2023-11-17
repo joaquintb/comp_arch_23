@@ -37,15 +37,14 @@ Simulation::Simulation(float ppm, int num_p) {
     this->fact_5_acc        = this->mew * this->mass;
 };
 
-void Simulation::checkValues() {
+void Simulation::check_positive_particles() {
     if(this->get_num_p() <= 0){
         std::cerr << "Error: Invalid number of particles: " << this->get_num_p() << ".\n";
         std::exit(-5);
     }
-    // Pending (else if) if num_p == number of particles read in file
 }
 
-void Simulation::printValues(const int n_blocks) {
+void Simulation::print_sim_values(const int n_blocks) {
     std::cout << "Number of particles: " << this->get_num_p() << '\n';
     std::cout << "Particles per meter: " << this->get_ppm() << '\n';
     std::cout << "Smoothing length: " << this-> get_sm_len() << '\n';
