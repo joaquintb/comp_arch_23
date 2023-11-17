@@ -5,7 +5,6 @@
 #include <fstream>
 
 #include "simulation.hpp"
-#include "util.hpp"
 
 struct Particle{
     long pid;
