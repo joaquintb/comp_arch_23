@@ -6,8 +6,6 @@
 	grid.hpp
 	block.cpp
 	block.hpp
-	util.cpp
-	util.hpp
 	simulation.cpp
 	simulation.hpp
     )
