@@ -5,14 +5,12 @@
 
 int main(int argc, char ** argv) {
   // Input handling
-  // inputTest(argc, argv);
-
-  // Open binary file and read ppm and num_p
   std::span const args_view{argv, static_cast<std::size_t>(argc)};
   std::vector<std::string> const arguments{args_view.begin() + 1, args_view.end()};
+  const int n_steps = handle_num_args(argc, arguments[0]);
   std::ifstream inputFile(arguments[1], std::ios::binary);
   std::ofstream outputFile(arguments[2], std::ios::binary | std::ios::trunc);
-  int n_steps = std::stoi(arguments[0]);
+  check_files(inputFile, arguments[1], outputFile, arguments[2]);
 
   float ppm;
   int num_p;
