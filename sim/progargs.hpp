@@ -11,8 +11,10 @@
 #include <span>
 #include <typeinfo>
 #include <cctype>
-#include <string.h>
+#include <string>
 
-void inputTest(int argc, char **argv);
+int handle_num_args(int argc, std::string const & steps);
+void check_files(std::ifstream & inputFile, std::string const & inputName,
+                 std::ofstream & outputFile, std::string const & outputName);
 
 #endif //COMP_ARCH_23_PROGARGS_HPP
