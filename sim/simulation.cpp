@@ -27,6 +27,8 @@ Simulation::Simulation(float ppm, int num_p) {
     this->n_y = floor((this->b_max[1] - this->b_min[1]) / this->get_sm_len());
     this->n_z = floor((this->b_max[2] - this->b_min[2]) / this->get_sm_len());
 
+    this->num_blocks = this->n_x * this->n_y * this->n_z;
+
     this->size_blocks = {(this->b_max[0] - this->b_min[0]) / this->n_x, 
                          (this->b_max[1] - this->b_min[1]) / this->n_y,
                          (this->b_max[2] - this->b_min[2]) / this->n_z};
@@ -44,12 +46,12 @@ void Simulation::check_positive_particles() {
     }
 }
 
-void Simulation::print_sim_values(const int n_blocks) {
+void Simulation::print_sim_values() {
     std::cout << "Number of particles: " << this->get_num_p() << '\n';
     std::cout << "Particles per meter: " << this->get_ppm() << '\n';
     std::cout << "Smoothing length: " << this-> get_sm_len() << '\n';
     std::cout << "Particle mass: " << this->mass << '\n';
     std::cout << "Grid size: " << this->n_x << " x " << this->n_y << " x " << this->n_z << '\n';
-    std::cout << "Number of blocks: " << n_blocks << '\n';
+    std::cout << "Number of blocks: " << this->num_blocks << '\n';
     std::cout << "Block size: " << this->size_blocks[0] << " x " << this->size_blocks[1] << " x " << this->size_blocks[2] << '\n';
 }
