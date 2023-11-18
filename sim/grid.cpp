@@ -425,8 +425,22 @@ void Grid::init_acc() {
   }
 }
 
-void Grid::gen_output(std::ofstream & out) {
-  for (auto & block : this->blocks) {
-    for (auto & particle : block.particles) { particle.write_particle_output(out); }
+void Grid::gen_output(std::ofstream &out) {
+  // Collect all particles from all blocks into a single vector
+  std::vector<Particle> all_particles;
+  for (auto &block : this->blocks) {
+    all_particles.insert(all_particles.end(), block.particles.begin(),
+                         block.particles.end());
+  }
+
+  // Sort all particles based on pid attribute
+  std::sort(all_particles.begin(), all_particles.end(),
+            [](const Particle &part_1, const Particle &part_2) {
+              return part_1.pid < part_2.pid;
+            });
+
+  // Write the sorted particles to the output
+  for (auto &particle : all_particles) {
+    particle.write_particle_output(out);
   }
 }
