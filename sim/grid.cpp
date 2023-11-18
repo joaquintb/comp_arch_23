@@ -168,7 +168,6 @@ bool Grid::cmp_trace(std::ifstream & trace) {
         std::cout << "Particle: " << j << " - Block: " << i << std::endl;
         std::cout << "Difference: " << fabs(particleFromFile.density - particleFromVector.density)
                   << "\n";
-        this->blocks[i].particles[j].density = particleFromFile.density;
         return false;
       }
 
@@ -285,6 +284,7 @@ void Grid::set_to_trace(std::ifstream & trace) {
   std::cout << "Fixed grid!" << std::endl;
 }
 
+/*
 void Grid::increase_all_dens(Simulation & sim) {
   std::set<std::pair<int, int>> proc_pairs;
   double const hSquared = std::pow(sim.get_sm_len(), 2);
@@ -302,6 +302,23 @@ void Grid::increase_all_dens(Simulation & sim) {
               part_i.inc_part_dens(part_j, hSquared);
               proc_pairs.insert(particle_pair);  // Pair processed, keep track
             }
+          }
+        }
+      }
+    }
+  }
+} */
+
+void Grid::increase_all_dens(Simulation & sim) {
+  double const hSquared = std::pow(sim.get_sm_len(), 2);
+  for (auto & block : this->blocks) {        // For each block in the grid
+    for (auto & part_i : block.particles) {  // Iterate over particles within the current block
+      for (auto & neigh_ptr : block.neighbours) {     // Iterate over neighbor block pointer
+        for (auto & part_j : neigh_ptr->particles) {  // Iterate neigh particles
+          int id_i = part_i.pid;
+          int id_j = part_j.pid;
+          if (id_j > id_i) {
+            part_i.inc_part_dens(part_j, hSquared);
           }
         }
       }
@@ -325,24 +342,18 @@ void Grid::trans_all_dens(Simulation & sim) {
 
 // distanceSquared change
 void Grid::increase_all_accs(Simulation & sim) {
-  std::set<std::pair<int, int>> proc_pairs;
   for (auto & block : this->blocks) {
     for (auto & part_i : block.particles) {
       for (auto & neigh_ptr : block.neighbours) {
         for (auto & part_j : neigh_ptr->particles) {
           int id_i = part_i.pid;
           int id_j = part_j.pid;
-          if (id_i != id_j) {
+          if (id_j > id_i) {
             double distanceSquared = std::pow(part_i.posX - part_j.posX, 2) +
                                      std::pow(part_i.posY - part_j.posY, 2) +
                                      std::pow(part_i.posZ - part_j.posZ, 2);
             if (distanceSquared < sim.sm_len_sq) {
-              // (i,j) equivalent to (j,i)
-              std::pair<int, int> particle_pair(std::min(id_i, id_j), std::max(id_i, id_j));
-              if (proc_pairs.find(particle_pair) == proc_pairs.end()) {
                 part_i.inc_part_acc(part_j, sim, distanceSquared);
-                proc_pairs.insert(particle_pair);  // Pair processed
-              }
             }
           }
         }
@@ -436,6 +447,14 @@ void Grid::init_acc() {
       part.accX    = 0.0;
       part.accY    = -9.8;
       part.accZ    = 0.0;
+    }
+  }
+}
+
+void Grid::gen_output(std::ofstream& out) {
+  for (auto &block: this->blocks) {
+    for (auto &particle: block.particles) {
+      particle.write_particle_output(out);
     }
   }
 }

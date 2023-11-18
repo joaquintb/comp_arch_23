@@ -25,6 +25,7 @@ class Grid {
         void repos(Simulation &sim);
         void set_to_trace(std::ifstream& trace);
         void init_acc();
+        void gen_output(std::ofstream& out);
 
         template <typename T>
           requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
