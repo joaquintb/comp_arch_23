@@ -15,7 +15,8 @@ public:
     double const mew = 0.4;
     double const d_p = 0.0002;
     double const delta_t = 0.001;
-    double n_x, n_y, n_z;
+    int n_x, n_y, n_z;
+    int num_blocks;
     double sm_len_sq;
     // Factors for acceleration increase
     double common_factor_acc;
@@ -35,7 +36,7 @@ public:
 
     Simulation(float ppm, int num_p);
     void check_positive_particles();
-    void print_sim_values(int);
+    void print_sim_values();
 
 private:
     double ppm, sm_len, mass; 
