@@ -12,7 +12,8 @@ class SimulationTest : public testing::Test {
         SimulationTest() : sim(1000.0, 1000) {}
     protected:
         void SetUp() override {
-            // this->sim = Simulation(1000.0, 1000);
+            // In this function, can do similar to fluid.cpp and read in input file to initialize sim and grid and others 
+
         }
 };
 
@@ -40,4 +41,8 @@ TEST_F(SimulationTest, CheckConstantsTest) {
     // Check smoothing length and mass 
     EXPECT_EQ(sim.get_sm_len(), sim.radius / sim.get_ppm());
     EXPECT_EQ(sim.get_mass(), sim.fluid_density / std::pow(sim.get_ppm(), 3));
+}
+
+TEST_F(SimulationTest, CheckPositiveParticlesTest) {
+    EXPECT_NO_THROW(sim.check_positive_particles());
 }
