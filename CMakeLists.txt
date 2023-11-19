@@ -20,3 +20,5 @@ include_directories(PUBLIC .)
 # Process cmake from sim and fluid directories
 add_subdirectory(sim)
 add_subdirectory(fluid)
+
+add_subdirectory(utests)
