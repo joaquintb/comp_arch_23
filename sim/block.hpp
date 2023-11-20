@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <fstream>
+#include <cmath>
 
 #include "simulation.hpp"
 
@@ -34,53 +35,46 @@ void write_binary_value(T value, std::ostream & os) {
 }
 
 struct Particle{
-    long pid;
-    double posX, posY, posZ;
-    double hvX, hvY, hvZ;
-    double velX, velY, velZ;
-    double density;
-    double accX, accY, accZ;
+    long pid{};
+    double posX{}, posY{}, posZ{};
+    double hvX{}, hvY{}, hvZ{};
+    double velX{}, velY{}, velZ{};
+    double density{};
+    double accX{}, accY{}, accZ{};
 
     Particle();
 
     Particle(std::ifstream& inputFile, int pid);
 
-    int compute_grid_index(Simulation& sim);
+    int compute_grid_index(Simulation& sim) const;
 
-    void write_particle_output(std::ofstream& outputFile);
+    void write_particle_output(std::ofstream& outputFile) const;
 
-    void inc_part_dens (Particle & part_j, double const hSquared);
+    void inc_part_dens (Particle & part_j, double hSquared);
 
-    void inc_part_acc (Particle &part_j, Simulation & sim, double const distanceSquared);
+    void inc_part_acc (Particle &part_j, Simulation & sim, double distanceSquared);
 };
 
 class Block{
     // Attributes 
 public:
-    Block (int bid, int blocks_x, int blocks_y, int blocks_z);
+    Block (int bid, int blocks_x, int blocks_y);
     int bid, index_i, index_j, index_k;
     std::vector<Particle> particles;
     std::vector<Block*> neighbours; // max size of 26
 
-    // Methods 
-    void reposition_particles();
-    void compute_forces(); 
-    void process_collisions();
-    void move_particles(); 
-    void process_boundaries();
+    void block_part_col_xmin(); // i = 0
+    void block_part_col_xmax(); // i = nx -1
+    void block_part_col_ymin(); // j = 0
+    void block_part_col_ymax(); // j = ny -1
+    void block_part_col_zmin(); // k = 0
+    void block_part_col_zmax(); // k = nz -1
 
-    void block_part_col_xmin(Simulation &sim); // i = 0
-    void block_part_col_xmax(Simulation &sim); // i = nx -1
-    void block_part_col_ymin(Simulation &sim); // j = 0
-    void block_part_col_ymax(Simulation &sim); // j = ny -1
-    void block_part_col_zmin(Simulation &sim); // k = 0
-    void block_part_col_zmax(Simulation &sim); // k = nz -1
-
-    void boundint_xmin(Simulation &sim);
-    void boundint_xmax(Simulation &sim);
-    void boundint_ymin(Simulation &sim);
-    void boundint_ymax(Simulation &sim);
-    void boundint_zmin(Simulation &sim);
-    void boundint_zmax(Simulation &sim);
+    void boundint_xmin();
+    void boundint_xmax();
+    void boundint_ymin();
+    void boundint_ymax();
+    void boundint_zmin();
+    void boundint_zmax();
 };
 #endif //COMP_ARCH_23_BLOCK_HPP

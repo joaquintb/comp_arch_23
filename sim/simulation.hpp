@@ -4,43 +4,39 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <array>
 
-class Simulation{
-public:
-    double const radius = 1.695;
-    double const fluid_density = 1000.0;
-    double const p_s = 3.0;
-    double const s_c = 30000;
-    double const d_v = 128.0;
-    double const mew = 0.4;
-    double const d_p = 0.0002;
-    double const delta_t = 0.001;
+struct Simulation{
+    // Input-dependent physical params
+    double ppm, sm_len, mass;
+    int num_p;
+
+    // Grid info
     int n_x, n_y, n_z;
     int num_blocks;
-    double sm_len_sq;
-    // Factors for acceleration increase
-    double common_factor_acc;
-    double fact_1_acc;
-    double fact_5_acc;
-
-
-    double const get_ppm();
-    int const get_num_p();
-    double const get_sm_len();
-    double const get_mass();
-
-    std::vector<double> const b_max{0.065, 0.1, 0.065};      // x_max, y_max, z_max
-    std::vector<double> const b_min{-0.065, -0.08, -0.065};
-
     std::vector<double> size_blocks;
 
-    Simulation(float ppm, int num_p);
-    void check_positive_particles();
-    void print_sim_values();
+    // Computational values shortcut
+    double sm_len_sq, common_factor_acc, fact_1_acc, fact_5_acc, sm_len_six, prefactor_dens;
 
-private:
-    double ppm, sm_len, mass; 
-    int num_p;
+    // Physical params
+    static constexpr double radius = 1.695;
+    static constexpr double fluid_density = 1000.0;
+    static constexpr double p_s = 3.0;
+    static constexpr double s_c = 30000;
+    static constexpr double d_v = 128.0;
+    static constexpr double mew = 0.4;
+    static constexpr double d_p = 0.0002;
+    static constexpr double delta_t = 0.001;
+    static constexpr double gravity = -9.8;
+    static constexpr double delta_coll_max = 1e-10;
+    static constexpr double forty_five_over_pi = 45.0 / std::numbers::pi;
+    static constexpr std::array<double,3> b_max{0.065, 0.1, 0.065};
+    static constexpr std::array<double,3> b_min{-0.065, -0.08, -0.065};
+
+    Simulation(float ppm, int num_p);
+    void check_positive_particles() const;
+    void print_sim_values();
 };
 
 #endif //COMP_ARCH_23_SIMULATION_HPP

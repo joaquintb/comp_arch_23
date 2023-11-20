@@ -14,18 +14,21 @@ class Grid {
     public:
         Grid(int size_x, int size_y, int size_z);
         void populate(Simulation& sim, std::ifstream& inputFile);
-        bool cmp_trace(std::ifstream& trace);
+
         void set_neighbors();
         void increase_all_dens(Simulation& sim);
         void trans_all_dens(Simulation &sim);
         void increase_all_accs(Simulation &sim);
-        void part_collisions(Simulation &sim);
-        void motion(Simulation &sim);
-        void part_box_collisions(Simulation &sim);
+        void part_collisions();
+        void motion();
+        void part_box_collisions();
         void repos(Simulation &sim);
-        void set_to_trace(std::ifstream& trace);
         void init_acc();
         void gen_output(std::ofstream& out);
+
+        // Trace comparison aux functions
+        // bool cmp_trace(std::ifstream& trace);
+        // void set_to_trace(std::ifstream& trace);
 
         template <typename T>
           requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
