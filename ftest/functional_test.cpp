@@ -22,7 +22,7 @@ class SimulationFunctionalTest : public testing::Test {
 
 TEST_F(SimulationFunctionalTest, SmallInputFunctionalTest) {
     std::ifstream inputFile("small.fld", std::ios::binary);
-    std::ofstream outputFile("out_ftest.fld", std::ios::binary | std::ios::trunc);
+    std::ofstream outputFile("out_small_ftest.fld", std::ios::binary | std::ios::trunc);
 
     auto ppm = read_binary_value<float>(inputFile);
     auto num_p = read_binary_value<int>(inputFile);
@@ -45,5 +45,22 @@ TEST_F(SimulationFunctionalTest, SmallInputFunctionalTest) {
 
 
 TEST_F(SimulationFunctionalTest, LargeInputFunctionalTest) {
+    std::ifstream inputFile("large.fld", std::ios::binary);
+    std::ofstream outputFile("out_large_ftest.fld", std::ios::binary | std::ios::trunc);
 
+    auto ppm = read_binary_value<float>(inputFile);
+    auto num_p = read_binary_value<int>(inputFile);
+
+    sim = Simulation(ppm, num_p);
+    grid = Grid(sim.n_x, sim.n_y, sim.n_z);
+
+    grid.populate(sim, inputFile);
+    grid.set_neighbors();
+    inputFile.close();
+    grid.simulate(n_steps, sim);
+
+    write_binary_value(static_cast<float>(ppm), outputFile);
+    write_binary_value(static_cast<int>(num_p), outputFile);
+    grid.gen_output(outputFile);
+    outputFile.close();
 }
