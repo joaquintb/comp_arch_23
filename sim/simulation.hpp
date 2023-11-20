@@ -4,6 +4,7 @@
 #include <array>
 #include <cmath>
 #include <iostream>
+#include <numbers>
 #include <vector>
 
 struct Simulation {

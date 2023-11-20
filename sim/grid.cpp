@@ -121,8 +121,8 @@ void Grid::motion() {
   for (auto & block : this->blocks) {
     // For each particle in that block
     for (auto & particle : block.particles) {
-      particle.posX = particle.posX + (particle.hvX * Simulation::delta_t) +
-                      (particle.accX * Simulation::delta_t * Simulation::delta_t);
+      particle.posX = particle.posX + particle.hvX * Simulation::delta_t +
+                      particle.accX * Simulation::delta_t * Simulation::delta_t;
       particle.posY = particle.posY + particle.hvY * Simulation::delta_t +
                       particle.accY * Simulation::delta_t * Simulation::delta_t;
       particle.posZ = particle.posZ + particle.hvZ * Simulation::delta_t +
