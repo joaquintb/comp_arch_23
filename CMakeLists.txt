@@ -20,4 +20,5 @@ include_directories(PUBLIC .)
 add_subdirectory(sim)
 add_subdirectory(fluid)
 
-#add_subdirectory(utest)
+add_subdirectory(utest)
+add_subdirectory(ftest)

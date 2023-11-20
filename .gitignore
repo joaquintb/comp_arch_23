@@ -2,3 +2,4 @@
 .idea/
 release/
 cmake-build-debug/
+out_ftest.fld

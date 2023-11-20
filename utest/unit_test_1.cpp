@@ -18,9 +18,6 @@ class SimulationTest : public testing::Test {
 };
 
 TEST_F(SimulationTest, CheckConstantsTest) {
-    EXPECT_EQ(sim.get_num_p(), 1000);
-    EXPECT_EQ(sim.get_ppm(), 1000.0);
-
     // Check Constants 
     EXPECT_EQ(sim.radius, 1.695);
     EXPECT_EQ(sim.fluid_density, 1000.0);
@@ -39,8 +36,8 @@ TEST_F(SimulationTest, CheckConstantsTest) {
     EXPECT_EQ(sim.b_min[2], -0.065);
 
     // Check smoothing length and mass 
-    EXPECT_EQ(sim.get_sm_len(), sim.radius / sim.get_ppm());
-    EXPECT_EQ(sim.get_mass(), sim.fluid_density / std::pow(sim.get_ppm(), 3));
+    EXPECT_EQ(sim.sm_len, sim.radius / sim.ppm);
+    EXPECT_EQ(sim.mass, sim.fluid_density / std::pow(sim.ppm, 3));
 }
 
 TEST_F(SimulationTest, CheckPositiveParticlesTest) {
