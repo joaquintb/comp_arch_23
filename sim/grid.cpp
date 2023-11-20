@@ -6,12 +6,17 @@ Grid::Grid(int size_x, int size_y, int size_z)
   for (int i = 0; i < this->size; ++i) { this->blocks.emplace_back(i, size_x, size_y); }
 }
 
-void Grid::populate(Simulation & sim, std::ifstream & inputFile) {
-  int const num_p = sim.num_p;
-  for (int i = 0; i < num_p; i++) {
-    Particle const cur_particle = Particle(inputFile, i);
-    int const grid_index  = cur_particle.compute_grid_index(sim);
+void Grid::populate(Simulation &sim, std::ifstream &inputFile) {
+  int num_p = 0;
+  while (inputFile.peek() != EOF) {
+    Particle const cur_particle = Particle(inputFile, num_p);
+    int const grid_index = cur_particle.compute_grid_index(sim);
     this->blocks[grid_index].particles.push_back(cur_particle);
+    num_p++;
+  }
+  if (num_p != sim.num_p) {
+    std::cerr << "Error: Number of particles mismatch. Header: " << sim.num_p << ", Found: " << num_p << ".\n";
+    std::exit(Simulation::particle_error_code);
   }
 }
 

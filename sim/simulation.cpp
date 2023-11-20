@@ -25,10 +25,9 @@ Simulation::Simulation(float ppm, int num_p)
 }
 
 void Simulation::check_positive_particles() const {
-  const int err_num_p = -5;
   if(this->num_p <= 0){
     std::cerr << "Error: Invalid number of particles: " << this->num_p << ".\n";
-    std::exit(err_num_p);
+    std::exit(Simulation::particle_error_code);
   }
 }
 

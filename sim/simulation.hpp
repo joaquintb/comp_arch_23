@@ -31,6 +31,7 @@ struct Simulation{
     static constexpr double gravity = -9.8;
     static constexpr double delta_coll_max = 1e-10;
     static constexpr double forty_five_over_pi = 45.0 / std::numbers::pi;
+    static constexpr int particle_error_code = -5;
     static constexpr std::array<double,3> b_max{0.065, 0.1, 0.065};
     static constexpr std::array<double,3> b_min{-0.065, -0.08, -0.065};
 
