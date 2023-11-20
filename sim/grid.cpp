@@ -199,6 +199,22 @@ void Grid::gen_output(std::ofstream &out) {
   }
 }
 
+void Grid::simulate(int n_steps, Simulation & sim) {
+    for (int time_step = 0; time_step < n_steps; ++time_step) {
+      if (time_step > 0) {
+        this->repos(sim);
+        this->init_acc();
+      }
+
+      this->increase_all_dens(sim);
+      this->trans_all_dens(sim);
+      this->increase_all_accs(sim);
+      this->part_collisions();
+      this->motion();
+      this->part_box_collisions();
+    }
+}
+
 
 /*
 bool Grid::cmp_trace(std::ifstream & trace) {

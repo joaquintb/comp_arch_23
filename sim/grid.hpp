@@ -25,6 +25,7 @@ class Grid {
         void repos(Simulation &sim);
         void init_acc();
         void gen_output(std::ofstream& out);
+        void simulate (int n_steps, Simulation &sim);
 
         // Trace comparison aux functions
         // bool cmp_trace(std::ifstream& trace);
