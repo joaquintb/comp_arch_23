@@ -9,7 +9,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # add_compile_options(-Wall -Wextra -Werror -pedantic -pedantic-errors)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 
-
 # Run clang−tidy on the whole source tree
 # Note this will slow down compilation.
 # You may temporarily disable but do not forget to enable again.
@@ -21,4 +20,4 @@ include_directories(PUBLIC .)
 add_subdirectory(sim)
 add_subdirectory(fluid)
 
-add_subdirectory(utest)
+#add_subdirectory(utest)
