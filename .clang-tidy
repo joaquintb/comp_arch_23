@@ -31,4 +31,3 @@ WarningsAsErrors: '*'
 HeaderFileExtensions: [ '', 'hpp' ]
 
 FormatStyle: file
-
