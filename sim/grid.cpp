@@ -6,16 +6,17 @@ Grid::Grid(int size_x, int size_y, int size_z)
   for (int i = 0; i < this->size; ++i) { this->blocks.emplace_back(i, size_x, size_y); }
 }
 
-void Grid::populate(Simulation &sim, std::ifstream &inputFile) {
+void Grid::populate(Simulation & sim, std::ifstream & inputFile) {
   int num_p = 0;
   while (inputFile.peek() != EOF) {
     Particle const cur_particle = Particle(inputFile, num_p);
-    int const grid_index = cur_particle.compute_grid_index(sim);
+    int const grid_index        = cur_particle.compute_grid_index(sim);
     this->blocks[grid_index].particles.push_back(cur_particle);
     num_p++;
   }
   if (num_p != sim.num_p) {
-    std::cerr << "Error: Number of particles mismatch. Header: " << sim.num_p << ", Found: " << num_p << ".\n";
+    std::cerr << "Error: Number of particles mismatch. Header: " << sim.num_p
+              << ", Found: " << num_p << ".\n";
     std::exit(Simulation::particle_error_code);
   }
 }
@@ -122,10 +123,10 @@ void Grid::motion() {
     for (auto & particle : block.particles) {
       particle.posX = particle.posX + (particle.hvX * Simulation::delta_t) +
                       (particle.accX * Simulation::delta_t * Simulation::delta_t);
-      particle.posY =
-          particle.posY + particle.hvY * Simulation::delta_t + particle.accY * Simulation::delta_t * Simulation::delta_t;
-      particle.posZ =
-          particle.posZ + particle.hvZ * Simulation::delta_t + particle.accZ * Simulation::delta_t * Simulation::delta_t;
+      particle.posY = particle.posY + particle.hvY * Simulation::delta_t +
+                      particle.accY * Simulation::delta_t * Simulation::delta_t;
+      particle.posZ = particle.posZ + particle.hvZ * Simulation::delta_t +
+                      particle.accZ * Simulation::delta_t * Simulation::delta_t;
 
       particle.velX = particle.hvX + half * particle.accX * Simulation::delta_t;
       particle.velY = particle.hvY + half * particle.accY * Simulation::delta_t;
@@ -184,42 +185,38 @@ void Grid::init_acc() {
   }
 }
 
-void Grid::gen_output(std::ofstream &out) {
+void Grid::gen_output(std::ofstream & out) {
   // Collect all particles from all blocks into a single vector
   std::vector<Particle> all_particles;
-  for (auto &block : this->blocks) {
-    all_particles.insert(all_particles.end(), block.particles.begin(),
-                         block.particles.end());
+  for (auto & block : this->blocks) {
+    all_particles.insert(all_particles.end(), block.particles.begin(), block.particles.end());
   }
 
   // Sort all particles based on pid attribute
   std::sort(all_particles.begin(), all_particles.end(),
-            [](const Particle &part_1, const Particle &part_2) {
+            [](Particle const & part_1, Particle const & part_2) {
               return part_1.pid < part_2.pid;
             });
 
   // Write the sorted particles to the output
-  for (auto &particle : all_particles) {
-    particle.write_particle_output(out);
-  }
+  for (auto & particle : all_particles) { particle.write_particle_output(out); }
 }
 
 void Grid::simulate(int n_steps, Simulation & sim) {
-    for (int time_step = 0; time_step < n_steps; ++time_step) {
-      if (time_step > 0) {
-        this->repos(sim);
-        this->init_acc();
-      }
-
-      this->increase_all_dens(sim);
-      this->trans_all_dens(sim);
-      this->increase_all_accs(sim);
-      this->part_collisions();
-      this->motion();
-      this->part_box_collisions();
+  for (int time_step = 0; time_step < n_steps; ++time_step) {
+    if (time_step > 0) {
+      this->repos(sim);
+      this->init_acc();
     }
-}
 
+    this->increase_all_dens(sim);
+    this->trans_all_dens(sim);
+    this->increase_all_accs(sim);
+    this->part_collisions();
+    this->motion();
+    this->part_box_collisions();
+  }
+}
 
 /*
 bool Grid::cmp_trace(std::ifstream & trace) {

@@ -78,14 +78,14 @@ int Particle::compute_grid_index(Simulation & sim) const {
 
 Block::Block(int bid, int blocks_x, int blocks_y) : bid(bid), index_k(bid / (blocks_x * blocks_y)) {
   int const block_id_aux = bid % (blocks_x * blocks_y);
-  this->index_j    = block_id_aux / blocks_x;
-  this->index_i    = block_id_aux % blocks_x;
+  this->index_j          = block_id_aux / blocks_x;
+  this->index_i          = block_id_aux % blocks_x;
 }
 
 void Block::block_part_col_xmin() {
   for (auto & particle : this->particles) {
-    double const temp_x = particle.posX + particle.hvX * Simulation::delta_t;
-    double const delta_coll    = Simulation::d_p - (temp_x - Simulation::b_min[0]);
+    double const temp_x     = particle.posX + particle.hvX * Simulation::delta_t;
+    double const delta_coll = Simulation::d_p - (temp_x - Simulation::b_min[0]);
     if (delta_coll > Simulation::delta_coll_max) {
       particle.accX += (Simulation::s_c * delta_coll - Simulation::d_v * particle.velX);
     }
@@ -94,8 +94,8 @@ void Block::block_part_col_xmin() {
 
 void Block::block_part_col_xmax() {
   for (auto & particle : this->particles) {
-    double const temp_x = particle.posX + particle.hvX * Simulation::delta_t;
-    double const delta_coll    = Simulation::d_p - (Simulation::b_max[0] - temp_x);
+    double const temp_x     = particle.posX + particle.hvX * Simulation::delta_t;
+    double const delta_coll = Simulation::d_p - (Simulation::b_max[0] - temp_x);
     if (delta_coll > Simulation::delta_coll_max) {
       particle.accX -= (Simulation::s_c * delta_coll + Simulation::d_v * particle.velX);
     }
@@ -104,8 +104,8 @@ void Block::block_part_col_xmax() {
 
 void Block::block_part_col_ymin() {
   for (auto & particle : this->particles) {
-    double const temp_y = particle.posY + particle.hvY * Simulation::delta_t;
-    double const delta_coll    = Simulation::d_p - (temp_y - Simulation::b_min[1]);
+    double const temp_y     = particle.posY + particle.hvY * Simulation::delta_t;
+    double const delta_coll = Simulation::d_p - (temp_y - Simulation::b_min[1]);
     if (delta_coll > Simulation::delta_coll_max) {
       particle.accY += (Simulation::s_c * delta_coll - Simulation::d_v * particle.velY);
     }
@@ -114,8 +114,8 @@ void Block::block_part_col_ymin() {
 
 void Block::block_part_col_ymax() {
   for (auto & particle : this->particles) {
-    double const temp_y = particle.posY + particle.hvY * Simulation::delta_t;
-    double const delta_coll    = Simulation::d_p - (Simulation::b_max[1] - temp_y);
+    double const temp_y     = particle.posY + particle.hvY * Simulation::delta_t;
+    double const delta_coll = Simulation::d_p - (Simulation::b_max[1] - temp_y);
     if (delta_coll > Simulation::delta_coll_max) {
       particle.accY -= (Simulation::s_c * delta_coll + Simulation::d_v * particle.velY);
     }
@@ -124,8 +124,8 @@ void Block::block_part_col_ymax() {
 
 void Block::block_part_col_zmin() {
   for (auto & particle : this->particles) {
-    double const temp_z = particle.posZ + particle.hvZ * Simulation::delta_t;
-    double const delta_coll    = Simulation::d_p - (temp_z - Simulation::b_min[2]);
+    double const temp_z     = particle.posZ + particle.hvZ * Simulation::delta_t;
+    double const delta_coll = Simulation::d_p - (temp_z - Simulation::b_min[2]);
     if (delta_coll > Simulation::delta_coll_max) {
       particle.accZ += (Simulation::s_c * delta_coll - Simulation::d_v * particle.velZ);
     }
@@ -134,8 +134,8 @@ void Block::block_part_col_zmin() {
 
 void Block::block_part_col_zmax() {
   for (auto & particle : this->particles) {
-    double const temp_z = particle.posZ + particle.hvZ * Simulation::delta_t;
-    double const delta_coll    = Simulation::d_p - (Simulation::b_max[2] - temp_z);
+    double const temp_z     = particle.posZ + particle.hvZ * Simulation::delta_t;
+    double const delta_coll = Simulation::d_p - (Simulation::b_max[2] - temp_z);
     if (delta_coll > Simulation::delta_coll_max) {
       particle.accZ -= (Simulation::s_c * delta_coll + Simulation::d_v * particle.velZ);
     }
