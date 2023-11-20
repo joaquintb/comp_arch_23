@@ -60,7 +60,7 @@ class Grid {
     }
 
   private:
-    int size_x, size_y, size_z, n_particles, size;
+    int size_x, size_y, size_z, size;
     std::vector<Block> blocks;
 };
 #endif  // COMP_ARCH_23_GRID_HPP

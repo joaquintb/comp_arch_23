@@ -1,7 +1,7 @@
 #include "grid.hpp"
 
 Grid::Grid(int size_x, int size_y, int size_z)
-  : size_x(size_x), size_y(size_y), size_z(size_z), n_particles(0), size(size_x * size_y * size_z) {
+  : size_x(size_x), size_y(size_y), size_z(size_z), size(size_x * size_y * size_z) {
   this->blocks = std::vector<Block>();
   for (int i = 0; i < this->size; ++i) { this->blocks.emplace_back(i, size_x, size_y); }
 }
