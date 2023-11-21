@@ -17,8 +17,8 @@ int main(int argc, char ** argv) {
   sim.check_positive_particles();  // Check number of particles > 0
   Grid grid = Grid(sim.n_x, sim.n_y, sim.n_z);
   grid.populate(sim, inputFile);
-  sim.print_sim_values();  // Print initial attributes of simulation (successful input)
   grid.set_neighbors();
+  sim.print_sim_values();  // Print initial attributes of simulation (successful input)
   inputFile.close();
   grid.simulate(n_steps, sim);
   // ------------- Output -------------
