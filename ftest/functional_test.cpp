@@ -9,58 +9,94 @@
 #include <iostream>
 #include <string>
 
+std::string ReadFileToString(const std::string& file_path) {
+    std::ifstream file(file_path);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
+
 class SimulationFunctionalTest : public testing::Test {
     public: 
         Simulation sim;
         Grid grid; 
         SimulationFunctionalTest() : sim(1000.0, 1000), grid(1, 1, 1) {}
-        const int n_steps = 2000;
 
     protected:
         void SetUp() override {}
 };
 
 TEST_F(SimulationFunctionalTest, SmallInputFunctionalTest) {
-    std::ifstream inputFile("small.fld", std::ios::binary);
-    std::ofstream outputFile("out_small_ftest.fld", std::ios::binary | std::ios::trunc);
+    for (int i = 1; i <= 5; i++) {
+        std::string input_file = "small.fld";
+        std::string output_file = "out_small_ftest.fld";
 
-    auto ppm = read_binary_value<float>(inputFile);
-    auto num_p = read_binary_value<int>(inputFile);
+        std::ifstream input_stream(input_file, std::ios::binary);
+        std::ofstream output_stream(output_file, std::ios::binary | std::ios::trunc);
+        int n_steps = i;
 
-    sim = Simulation(ppm, num_p);
-    grid = Grid(sim.n_x, sim.n_y, sim.n_z);
+        auto ppm = read_binary_value<float>(input_stream);
+        auto num_p = read_binary_value<int>(input_stream);
 
-    grid.populate(sim, inputFile);
-    grid.set_neighbors();
-    inputFile.close();
-    grid.simulate(n_steps, sim);
+        sim = Simulation(ppm, num_p);
+        grid = Grid(sim.n_x, sim.n_y, sim.n_z);
 
-    write_binary_value(static_cast<float>(ppm), outputFile);
-    write_binary_value(static_cast<int>(num_p), outputFile);
-    grid.gen_output(outputFile);
-    outputFile.close();
+        grid.populate(sim, input_stream);
+        grid.set_neighbors();
+        input_stream.close();
+        grid.simulate(n_steps, sim);
 
-    // INSERT ASSERT STATEMENT HERE TO COMPARE OUTPUT FILE TO EXPECTED OUTPUT FILE 
+        write_binary_value(static_cast<float>(ppm), output_stream);
+        write_binary_value(static_cast<int>(num_p), output_stream);
+        grid.gen_output(output_stream);
+        output_stream.close();
+
+        std::string reference_file = "out/small-" + std::to_string(i) + ".fld";
+
+        std::string output_content = ReadFileToString(output_file);
+        std::string reference_content = ReadFileToString(reference_file);
+        EXPECT_EQ(output_content, reference_content) << "The contents of " << output_file 
+                                                     << " and " << reference_file 
+                                                     << " do not match.";
+        
+        std::cout << "Passed test " << i << " of 5 for SmallInputFunctionalTest." << std::endl; 
+    }
 }
 
 
 TEST_F(SimulationFunctionalTest, LargeInputFunctionalTest) {
-    std::ifstream inputFile("large.fld", std::ios::binary);
-    std::ofstream outputFile("out_large_ftest.fld", std::ios::binary | std::ios::trunc);
+    for (int i = 1; i <= 5; i++) {
+        std::string input_file = "large.fld";
+        std::string output_file = "out_large_ftest.fld";
 
-    auto ppm = read_binary_value<float>(inputFile);
-    auto num_p = read_binary_value<int>(inputFile);
+        std::ifstream input_stream(input_file, std::ios::binary);
+        std::ofstream output_stream(output_file, std::ios::binary | std::ios::trunc);
+        int n_steps = i;
 
-    sim = Simulation(ppm, num_p);
-    grid = Grid(sim.n_x, sim.n_y, sim.n_z);
+        auto ppm = read_binary_value<float>(input_stream);
+        auto num_p = read_binary_value<int>(input_stream);
 
-    grid.populate(sim, inputFile);
-    grid.set_neighbors();
-    inputFile.close();
-    grid.simulate(n_steps, sim);
+        sim = Simulation(ppm, num_p);
+        grid = Grid(sim.n_x, sim.n_y, sim.n_z);
 
-    write_binary_value(static_cast<float>(ppm), outputFile);
-    write_binary_value(static_cast<int>(num_p), outputFile);
-    grid.gen_output(outputFile);
-    outputFile.close();
+        grid.populate(sim, input_stream);
+        grid.set_neighbors();
+        input_stream.close();
+        grid.simulate(n_steps, sim);
+
+        write_binary_value(static_cast<float>(ppm), output_stream);
+        write_binary_value(static_cast<int>(num_p), output_stream);
+        grid.gen_output(output_stream);
+        output_stream.close();
+
+        std::string reference_file = "out/large-" + std::to_string(i) + ".fld";
+
+        std::string output_content = ReadFileToString(output_file);
+        std::string reference_content = ReadFileToString(reference_file);
+        EXPECT_EQ(output_content, reference_content) << "The contents of " << output_file 
+                                                     << " and " << reference_file 
+                                                     << " do not match.";
+        
+        std::cout << "Passed test " << i << " of 5 for LargeInputFunctionalTest." << std::endl; 
+    }
 }
