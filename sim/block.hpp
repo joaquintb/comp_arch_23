@@ -1,68 +1,81 @@
 #ifndef COMP_ARCH_23_BLOCK_HPP
 #define COMP_ARCH_23_BLOCK_HPP
 
-#include <vector>
-#include <fstream>
-
 #include "simulation.hpp"
 
-struct Particle{
-    int64_t pid;
-    double posX, posY, posZ;
-    double hvX, hvY, hvZ;
-    double velX, velY, velZ;
-    double density;
-    double accX, accY, accZ;
+#include <cmath>
+#include <fstream>
+#include <vector>
+
+template <typename T>
+  requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
+char const * as_buffer(T const & value) {
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+  return reinterpret_cast<char const *>(&value);
+}
+
+template <typename T>
+char * as_writable_buffer(T & value) {
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+  return reinterpret_cast<char *>(&value);
+}
+
+template <typename T>
+  requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
+T read_binary_value(std::istream & is) {
+  T value{};
+  is.read(as_writable_buffer(value), sizeof(value));
+  return value;
+}
+
+template <typename T>
+  requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
+void write_binary_value(T value, std::ostream & os) {
+  os.write(as_buffer(value), sizeof(value));
+}
+
+struct Particle {
+    long pid{};
+    double posX{}, posY{}, posZ{};
+    double hvX{}, hvY{}, hvZ{};
+    double velX{}, velY{}, velZ{};
+    double density{};
+    double accX{}, accY{}, accZ{};
 
     Particle();
 
-    Particle(std::ifstream& inputFile, int pid);
+    Particle(std::ifstream & inputFile, int pid);
 
-    int compute_grid_index(Simulation& sim);
+    int compute_grid_index(Simulation & sim) const;
 
-    void write_particle_trace(std::ofstream& outputFile);
+    void write_particle_output(std::ofstream & outputFile) const;
 
-    template <typename T>
-    requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
-    T read_binary_value(std::istream & is) {
-        T value{};
-        is.read(as_writable_buffer(value), sizeof(value));
-        return value;
-    }
+    void inc_part_dens(Particle & part_j, double hSquared);
 
-    template <typename T>
-    requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
-    void write_binary_value(T value, std::ostream & os) {
-        os.write(as_buffer(value), sizeof(value));
-    }
-
-    template <typename T>
-    requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
-    char const * as_buffer(T const & value) {
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-        return reinterpret_cast<char const *>(&value);
-    }
-
-    template <typename T>
-    char * as_writable_buffer(T & value) {
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-        return reinterpret_cast<char *>(&value);
-    }
+    void inc_part_acc(Particle & part_j, Simulation & sim, double distanceSquared);
 };
 
-class Block{
-    // Attributes 
-public:
-    Block (int bid);
-    int bid;
+class Block {
+    // Attributes
+
+  public:
+    Block(int bid, int blocks_x, int blocks_y);
+    int bid, index_i, index_j, index_k;
     std::vector<Particle> particles;
-    std::vector<Block*> neighbours; // max size of 26
+    std::vector<Block *> neighbours;  // max size of 26
 
-    // Methods 
-    void reposition_particles();
-    void compute_forces(); 
-    void process_collisions();
-    void move_particles(); 
-    void process_boundaries();
+    void block_part_col_xmin();  // i = 0
+    void block_part_col_xmax();  // i = nx -1
+    void block_part_col_ymin();  // j = 0
+    void block_part_col_ymax();  // j = ny -1
+    void block_part_col_zmin();  // k = 0
+    void block_part_col_zmax();  // k = nz -1
+
+    void boundint_xmin();
+    void boundint_xmax();
+    void boundint_ymin();
+    void boundint_ymax();
+    void boundint_zmin();
+    void boundint_zmax();
 };
-#endif //COMP_ARCH_23_BLOCK_HPP
+#endif  // COMP_ARCH_23_BLOCK_HPP

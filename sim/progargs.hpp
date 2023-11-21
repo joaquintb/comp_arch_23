@@ -1,19 +1,20 @@
 #ifndef COMP_ARCH_23_PROGARGS_HPP
 #define COMP_ARCH_23_PROGARGS_HPP
 
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <cmath>
-#include <memory>
 #include <algorithm>
+#include <cctype>
+#include <cmath>
+#include <fstream>
+#include <iostream>
+#include <memory>
 #include <numbers>
 #include <span>
+#include <string>
 #include <typeinfo>
-#include <cctype>
-#include <string.h>
+#include <vector>
 
-void inputTest(int argc, char **argv);
-void readFile(int num_p, int ppm, float sm_len, float mass, int grid_x, int grid_y, int grid_z, int num_blocks, float blockSize_x, float blockSize_y, float blockSize_z );
+int handle_num_args(int argc, std::string const & steps);
+void check_files(std::ifstream & inputFile, std::string const & inputName,
+                 std::ofstream & outputFile, std::string const & outputName);
 
-#endif //COMP_ARCH_23_PROGARGS_HPP
+#endif  // COMP_ARCH_23_PROGARGS_HPP
