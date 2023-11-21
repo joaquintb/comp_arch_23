@@ -15,10 +15,10 @@ int main(int argc, char ** argv) {
   auto num_p = read_binary_value<int>(inputFile);
   Simulation sim = Simulation(ppm, num_p);
   sim.check_positive_particles();  // Check number of particles > 0
-  sim.print_sim_values();  // Print initial attributes of simulation (successful input)
   Grid grid = Grid(sim.n_x, sim.n_y, sim.n_z);
   grid.populate(sim, inputFile);
   grid.set_neighbors();
+  sim.print_sim_values();  // Print initial attributes of simulation (successful input)
   inputFile.close();
   grid.simulate(n_steps, sim);
   // ------------- Output -------------
