@@ -24,11 +24,13 @@ Simulation::Simulation(float ppm, int num_p)
       (dens_factor_1 * this->mass) / (dens_factor_2 * std::numbers::pi * pow(sm_len, exp_9));
 }
 
-void Simulation::check_positive_particles() const {
+bool Simulation::check_positive_particles() const {
   if (this->num_p <= 0) {
     std::cerr << "Error: Invalid number of particles: " << this->num_p << ".\n";
     std::exit(Simulation::particle_error_code);
+    return false;
   }
+  return true;
 }
 
 void Simulation::print_sim_values() {

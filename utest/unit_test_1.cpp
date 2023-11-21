@@ -34,10 +34,10 @@ TEST(SimulationUnitTest, CheckConstantsTest) {
     EXPECT_EQ(sim.mass, sim.fluid_density / std::pow(sim.ppm, 3));
 }
 
-// TEST(SimulationUnitTest, CheckPositiveParticlesTest) {
-//     const int ppm = 1000.0;
-//     const int num_p = 1000;
-//     const Simulation sim = Simulation(ppm, num_p);
+TEST(SimulationUnitTest, CheckPositiveParticlesTest) {
+    const int ppm = 1000.0;
+    const int num_p = 1000;
+    const Simulation sim = Simulation(ppm, num_p);
 
-//     EXPECT_NO_THROW({sim.check_positive_particles();});
-// }
+    EXPECT_EQ(sim.check_positive_particles(), true);
+}

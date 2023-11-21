@@ -37,7 +37,7 @@ struct Simulation {
     static constexpr std::array<double, 3> b_min{-0.065, -0.08, -0.065};
 
     Simulation(float ppm, int num_p);
-    void check_positive_particles() const;
+    bool check_positive_particles() const;
     void print_sim_values();
 };
 
