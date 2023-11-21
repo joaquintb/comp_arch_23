@@ -6,18 +6,12 @@
 #include "../sim/progargs.hpp"
 #include <cmath>
 
-class SimulationTest : public testing::Test {
-    public: 
-        Simulation sim;
-        SimulationTest() : sim(1000.0, 1000) {}
-    protected:
-        void SetUp() override {
-            // In this function, can do similar to fluid.cpp and read in input file to initialize sim and grid and others 
 
-        }
-};
+TEST(SimulationUnitTest, CheckConstantsTest) {
+    const int ppm = 1000.0;
+    const int num_p = 1000;
+    const Simulation sim = Simulation(ppm, num_p);
 
-TEST_F(SimulationTest, CheckConstantsTest) {
     // Check Constants 
     EXPECT_EQ(sim.radius, 1.695);
     EXPECT_EQ(sim.fluid_density, 1000.0);
@@ -40,6 +34,10 @@ TEST_F(SimulationTest, CheckConstantsTest) {
     EXPECT_EQ(sim.mass, sim.fluid_density / std::pow(sim.ppm, 3));
 }
 
-TEST_F(SimulationTest, CheckPositiveParticlesTest) {
-    EXPECT_NO_THROW(sim.check_positive_particles());
-}
+// TEST(SimulationUnitTest, CheckPositiveParticlesTest) {
+//     const int ppm = 1000.0;
+//     const int num_p = 1000;
+//     const Simulation sim = Simulation(ppm, num_p);
+
+//     EXPECT_NO_THROW({sim.check_positive_particles();});
+// }

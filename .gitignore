@@ -3,3 +3,5 @@
 release/
 cmake-build-debug/
 out_*.fld
+slurm*.out
+build/
