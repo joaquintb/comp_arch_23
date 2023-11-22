@@ -29,9 +29,6 @@ class Grid {
     void simulate(int n_steps, Simulation & sim);
 
     // Trace comparison aux functions
-    // bool cmp_trace(std::ifstream& trace);
-    // void set_to_trace(std::ifstream& trace);
-
     template <typename T>
       requires(std::is_integral_v<T> or std::is_floating_point_v<T>)
     T read_binary_value(std::istream & is) {
