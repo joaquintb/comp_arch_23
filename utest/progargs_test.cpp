@@ -11,12 +11,17 @@
 
 TEST(FileReadabilityTest, NonReadableFile) {
   // Create a temporary file with read-only permissions
-  std::ofstream tmpFile("nonreadablefile.txt");
-  tmpFile << "Non Readable";
-  tmpFile.close();
+  // std::ofstream tmpFile("nonreadablefile.txt");
+  // tmpFile << "Non Readable";
+  // tmpFile.close();
 
-  std::ifstream tmpInputFile("nonreadablefile.txt");
-  tmpFile.close();
+  // std::ifstream tmpInputFile("nonreadablefile.txt");
+  // tmpFile.close();
+
+  const std::string filename = "nonexistent_file.txt";
+  std::ifstream tmpInputFile(filename);
+  tmpInputFile.close();
+
 
   //create temporary output file with write permissions
   std::ofstream tmpOutFile("tmpOutFile.txt");
@@ -25,10 +30,11 @@ TEST(FileReadabilityTest, NonReadableFile) {
 
 
   // Make the file non-readable
-  chmod("nonreadablefile.txt", 0222);  // Remove read permissions
+  //chmod("nonreadablefile.txt", 222);  // Remove read permissions
 
   // Assert that the file is not readable, Need to fix inputfile to ifstream
-  EXPECT_EXIT(check_files(tmpInputFile,"nonreadablefile.txt", tmpOutFile, "tmpOutFile.txt" ), testing::ExitedWithCode(-3), "Error: Cannot open nonreadablefile.txt for reading.\n");
+  //need to use corresponding unsigned value, ex: -3 signed integer is 253 signed integer
+  EXPECT_EXIT(check_files(tmpInputFile,"nonexistent_file.txt", tmpOutFile, "tmpOutFile.txt" ), testing::ExitedWithCode(253), "Error: Cannot open nonexistent_file.txt for reading.\n");
 }
 
 //TEST(FileReadabilityTest, NonexistentFile) {
