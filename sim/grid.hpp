@@ -56,7 +56,7 @@ class Grid {
       return reinterpret_cast<char *>(&value);
     }
 
-  private:
+  public:
     int size_x, size_y, size_z, size;
     std::vector<Block> blocks;
 };
